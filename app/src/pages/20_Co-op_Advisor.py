@@ -19,15 +19,15 @@ st.subheader("Co-op Advisor Dashboard")
 
 # Button to navigate to "View Student Progress"
 if st.button('View Student Progress', type='primary', use_container_width=True):
-    st.switch_page('pages/21_View_Student_Progress.py')
+    st.switch_page('pages/21_Student_Progress.py')
 
 # Button to navigate to "Update Co-op Placement"
 if st.button('Update Co-op Placement', type='primary', use_container_width=True):
-    st.switch_page('pages/22_Update_Coop_Placement.py')
+    st.switch_page('pages/22_Update_Placement.py')
 
 # Button to navigate to "Manage Employers"
 if st.button('Manage Employers', type='primary', use_container_width=True):
-    st.switch_page('pages/23_Manage_Employers.py')
+    st.switch_page('pages/23_Manage_Employer.py')
 
 
 
