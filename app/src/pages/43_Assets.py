@@ -61,8 +61,8 @@ for asset in st.session_state.assets:
             updated_name = st.text_input("Asset Name", value=asset["assetName"])
             updated_status = st.selectbox(
                 "Status",
-                ["Active", "Inactive"],
-                index=["Active", "Inactive"].index(asset["ITStatus"]),
+                ["Operational", "Inactive"],
+                index=["Operational", "Inactive"].index(asset["ITStatus"]),
             )
             updated_type = st.text_input("Type", value=asset["assetType"])
             updated_details = st.text_area("Details", value=asset["assetDetails"])
