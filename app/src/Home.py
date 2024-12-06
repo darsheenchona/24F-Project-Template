@@ -55,7 +55,7 @@ if st.button("Student",
     # finally, we ask streamlit to switch to another page, in this case, the 
     # landing page for this particular user type
     logger.info("Logging in as a Student")
-    st.switch_page('pages/00_Student.py')
+    st.switch_page('pages/00_student_Home.py')
 
 if st.button("Recruiter", type="primary", use_container_width=True):
     st.session_state['authenticated'] = True
@@ -82,6 +82,7 @@ if st.button('IT Service Head',
     st.session_state['first_name'] = 'Jack'
     logger.info("Logging in as a IT Service Head")
     st.switch_page('pages/40_ITService.py')
+    
 
 
 

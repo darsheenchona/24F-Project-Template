@@ -30,4 +30,7 @@ if st.button('Manage Employers', type='primary', use_container_width=True):
     st.switch_page('pages/23_Manage_Employer.py')
 
 
+# Button to navigate to "View Advisor Profile"
+if st.button('Advisor Profile', type='primary', use_container_width=True):
+    st.switch_page('pages/24_Advisor_Profile.py')
 

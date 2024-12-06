@@ -13,6 +13,7 @@ DROP TABLE IF EXISTS AdvisorMeetings;
 DROP TABLE IF EXISTS RecommendedJobs;
 DROP TABLE IF EXISTS SavedJobs;
 DROP TABLE IF EXISTS Applications;
+DROP TABLE IF EXISTS Placement;
 DROP TABLE IF EXISTS Jobs;
 DROP TABLE IF EXISTS CoOpAdvisors;
 DROP TABLE IF EXISTS Alumni;
@@ -21,6 +22,9 @@ DROP TABLE IF EXISTS Students;
 DROP TABLE IF EXISTS Users;
 DROP TABLE IF EXISTS Reports;
 DROP TABLE IF EXISTS Interviews;
+DROP TABLE IF EXISTS ITEmployee;
+DROP TABLE IF EXISTS ITAssets;
+DROP TABLE IF EXISTS Tickets;
 
 
 -- Create the Users table
@@ -43,6 +47,19 @@ CREATE TABLE CoOpAdvisors (
     ActiveStudentCount INT,
     FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
 );
+
+-- Create the Placement table
+CREATE TABLE Placement (
+    placementID INT AUTO_INCREMENT PRIMARY KEY,
+    StudentID INT NOT NULL,
+    company VARCHAR(100) NOT NULL,
+    position VARCHAR(100) NOT NULL,
+    startDate DATE NOT NULL,
+    endDate DATE NOT NULL,
+    status ENUM('Active', 'Completed', 'Pending') NOT NULL,
+    FOREIGN KEY (StudentID) REFERENCES Students(StudentID) ON DELETE CASCADE
+);
+
 
 -- Create the Students table
 CREATE TABLE Students (
@@ -217,6 +234,34 @@ CREATE TABLE Interviews (
     FOREIGN KEY (StudentID) REFERENCES Students(StudentID) ON DELETE CASCADE
 );
 
+-- Create the ITEmployee table
+CREATE TABLE ITEmployee (
+    ITEmpID INT AUTO_INCREMENT PRIMARY KEY,
+    PlatformUsageMetrics TEXT,
+    SystemHealthLogs TEXT,
+    Email TEXT,
+    EmpFirstName TEXT,
+    EmpLastName TEXT
+);
+
+-- Create the ITAssets table
+CREATE TABLE ITAssets (
+    assetID INT AUTO_INCREMENT PRIMARY KEY,
+    assetName TEXT,
+    ITStatus TEXT,
+    assetType TEXT,
+    assetDetails TEXT
+);
+
+-- Create the Tickets table 
+CREATE TABLE Tickets (
+    TicketID INT AUTO_INCREMENT PRIMARY KEY,
+    TicketTime DATETIME DEFAULT CURRENT_TIMESTAMP,
+    TicketStatus TEXT,
+    TicketDetails TEXT,
+    FufilledBy INT DEFAULT 1,
+    FOREIGN KEY (FufilledBy) REFERENCES ITEmployee(ITEmpID) 
+);
 
 
 INSERT INTO Users (Name, Email, Role, Password) VALUES
@@ -251,7 +296,10 @@ INSERT INTO Users (Name, Email, Role, Password) VALUES
 ('Grace Collins', 'grace.collins@advisors.com', 'Advisor', 'GraceAdvisorSecure@'),
 ('Lucas Bell', 'lucas.bell@advisors.com', 'Advisor', 'LucasAdvises#2024');
 
-
+INSERT INTO Placement (StudentID, company, position, startDate, endDate, status) VALUES
+(1, 'Google', 'Software Engineer', '2023-06-01', '2023-12-01', 'Active'),
+(1, 'Facebook', 'Data Analyst', '2024-01-01', '2024-06-01', 'Pending'),
+(2, 'Microsoft', 'UX Designer', '2023-07-01', '2023-12-01', 'Completed');
 
 INSERT INTO CoOpAdvisors (UserID, Department, MeetingAvailability, ActiveStudentCount) VALUES
 (1, 'Computer Science', 'Monday, Wednesday', 25),
@@ -854,4 +902,54 @@ INSERT INTO Alumni (Name, GraduationYear, CoOpExperienceDetails, CurrentPosition
 ('Noah Rivera', 2020, 'Education Consultant Intern at InnovateEd', 'Education Consultant', 'InnovateEd', 'https://linkedin.com/in/noahrivera'),
 ('Grace Campbell', 2021, 'Research Assistant Intern at NeuroTech Labs', 'Research Scientist', 'NeuroTech Labs', 'https://linkedin.com/in/gracecampbell');
 
+INSERT INTO ITEmployee (Email, EmpFirstName, EmpLastName) VALUES
+('temp@company.com','Temp','Name'),
+('jdoe@company.com', 'John', 'Doe'),
+('asmith@company.com', 'Alice', 'Smith'),
+('mbrown@company.com', 'Michael', 'Brown');
 
+INSERT INTO ITAssets (assetName, ITStatus, assetType, assetDetails)
+VALUES
+('Firewall', 'Operational', 'Hardware', 'Secures the company network from external threats'),
+('Load Balancer', 'Operational', 'Hardware', 'Distributes incoming traffic to servers'),
+('Database Server', 'Needs Maintenance', 'Hardware', 'Stores transactional and analytics data'),
+('Cloud Storage', 'Operational', 'Service', 'AWS S3 for backups and archives'),
+('Endpoint Security Software', 'Needs Update', 'Software', 'Antivirus and malware protection for user endpoints'),
+('Laptop', 'Operational', 'Hardware', 'Dell Latitude for remote work'),
+('Printer', 'Operational', 'Hardware', 'HP LaserJet for office printing'),
+('Email Server', 'Needs Maintenance', 'Hardware', 'Handles all company email traffic'),
+('Switch', 'Operational', 'Hardware', 'Cisco Catalyst for LAN connectivity'),
+('Router', 'Operational', 'Hardware', 'Handles all outgoing internet traffic'),
+('Virtual Machine', 'Operational', 'Software', 'Windows Server 2019 for app hosting'),
+('Antivirus Software', 'Operational', 'Software', 'McAfee Enterprise Security Suite'),
+('Patch Management Software', 'Operational', 'Software', 'Automates software patching across the network'),
+('Backup Server', 'Needs Maintenance', 'Hardware', 'Stores daily backups for disaster recovery'),
+('Firewall Software', 'Operational', 'Software', 'Sophos for network security'),
+('File Server', 'Operational', 'Hardware', 'Shared storage for company files'),
+('CRM Software', 'Operational', 'Software', 'Manages customer relationships and interactions'),
+('DNS Server', 'Operational', 'Hardware', 'Resolves domain names to IP addresses'),
+('Patch Panel', 'Operational', 'Hardware', 'Connects network cables in server racks'),
+('Network Analyzer', 'Operational', 'Software', 'Monitors network performance and detects anomalies');
+
+
+INSERT INTO Tickets (TicketStatus, TicketDetails, FufilledBy) VALUES
+('Open', 'Resolve slow database queries', 1),
+('In Progress', 'Fix network latency issues', 2),
+('Closed', 'Update endpoint security software', 4),
+('Open', 'Install new patches on servers', 1),
+('Closed', 'Configure new firewall rules', 2),
+('In Progress', 'Replace failed hard drive on database server', 4),
+('Open', 'Investigate high CPU usage on email server', 1),
+('Closed', 'Update antivirus definitions on all endpoints', 3),
+('Open', 'Reboot file server after maintenance', 1),
+('Closed', 'Fix network switch connectivity issues', 2),
+('Open', 'Troubleshoot VPN connection for remote employees', 1),
+('In Progress', 'Analyze traffic for possible DDoS attack', 2),
+('Closed', 'Implement new group policies for user access', 4),
+('Open', 'Replace aging printer hardware', 1),
+('In Progress', 'Test new backup server configuration', 2),
+('Open', 'Deploy patch management software update', 1),
+('Closed', 'Resolve user login issues on CRM software', 4),
+('Open', 'Optimize network performance for cloud storage', 1),
+('In Progress', 'Audit DNS server for configuration errors', 3),
+('Closed', 'Fix broken patch panel in server room', 2);
