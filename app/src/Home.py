@@ -57,14 +57,13 @@ if st.button("Student",
     logger.info("Logging in as a Student")
     st.switch_page('pages/00_Student.py')
 
-if st.button('Recruiter', 
-            type = 'primary', 
-            use_container_width=True):
+if st.button("Act as Yomayra, a Recruiter", type="primary", use_container_width=True):
     st.session_state['authenticated'] = True
-    st.session_state['role'] = 'recuiter'
-    st.session_state['first_name'] = 'Mohammad'
+    st.session_state['role'] = 'recruiter'
+    st.session_state['recruiter_id'] = 24  # HARDCODED recruiterID for demo purposes
+    st.session_state['first_name'] = 'Yomayra'
     logger.info("Logging in as a Recruiter")
-    st.switch_page('pages/10_Recruiter.py')
+    st.switch_page('pages/40_Recruiter_Home.py')
 
 if st.button('Co-op Advisor', 
             type = 'primary', 
