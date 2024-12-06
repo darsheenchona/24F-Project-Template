@@ -76,7 +76,6 @@ if job_id:
     response_interviews = requests.get(f"http://api:4000/jobs/{job_id}/interviews")
     if response_interviews.status_code == 200:
         interviews = response_interviews.json()
-        st.write(interviews)
         if interviews:
             for interview in interviews:
 
