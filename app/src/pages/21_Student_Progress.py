@@ -16,7 +16,7 @@ SideBarLinks()
 st.title("View Student Progress")
 
 # API URL for retrieving student profile and progress
-api_url = 'http://localhost:8501/Student_Progress'  # Update the API URL if necessary
+api_url = 'http://localhost:4000/students'  # Update the API URL if necessary
 
 # Retrieve student profile and progress via the API (GET request)
 try:

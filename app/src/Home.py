@@ -70,7 +70,7 @@ if st.button('Co-op Advisor',
             use_container_width=True):
     st.session_state['authenticated'] = True
     st.session_state['role'] = 'administrator'
-    st.session_state['first_name'] = 'George'
+    st.session_state['first_name'] = 'Steve'
     logger.info("Logging in as a Co-op Advisor")
     st.switch_page('pages/20_Co-op_Advisor.py')
 

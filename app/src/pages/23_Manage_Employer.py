@@ -12,24 +12,22 @@ SideBarLinks()
 
 st.title("Manage Employers")
 
-# Retrieve list of employers from the API
-try:
-    employer_response = requests.get('http://localhost:8501/employers')  # Adjust the URL if needed
+# Retrieve list of employers
+employer_response = requests.get('http://localhost:8501/employers')
 
-    # Check if the response status is OK (200)
-    if employer_response.status_code == 200:
-        employers = employer_response.json()  # If the response is valid JSON, parse it
-        if employers:  # Check if the response contains data
-            st.subheader("Employer List:")
-            for employer in employers:
-                st.write(f"**Employer ID:** {employer['id']} - {employer['name']}")
+if employer_response.status_code == 200:
+    employers = employer_response.json()
+    st.subheader("Employer List:")
+    for employer in employers:
+        st.write(f"**Employer ID:** {employer['id']} - {employer['name']}")
+    
+    # Deactivate employer functionality
+    employer_id_to_deactivate = st.number_input("Enter Employer ID to deactivate:", min_value=1)
+    if st.button("Deactivate Employer"):
+        deactivate_response = requests.put(f'http://localhost:8501/employers/{employer_id_to_deactivate}', json={"status": "inactive"})
+        if deactivate_response.status_code == 200:
+            st.success(f"Employer with ID {employer_id_to_deactivate} deactivated successfully!")
         else:
-            st.warning("No employers found.")
-    else:
-        st.error(f"Error: Unable to fetch employer data. Status code: {employer_response.status_code}")
-        logger.error(f"Failed API request with status code: {employer_response.status_code}")
-except requests.exceptions.RequestException as e:
-    # Handle exceptions like network errors, connection issues, etc.
-    st.error(f"An error occurred: {str(e)}")
-    logger.error(f"Error occurred while making the request: {str(e)}")
-
+            st.error("Failed to deactivate employer.")
+else:
+    st.error("Error fetching employer data.")
