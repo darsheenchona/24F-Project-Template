@@ -19,21 +19,12 @@ st.title("View Student Progress")
 api_url = 'http://localhost:4000/students'  # Update the API URL if necessary
 
 # Retrieve student profile and progress via the API (GET request)
-try:
-    response = requests.get(api_url)
+response = requests.get('http://localhost:8501/Student_Progress')  # API URL for student profile
 
-    # Log the raw response text to see what we are receiving from the API
-    logger.info(f"Raw response from API: {response.text}")
-
-    # Check if the response is successful (status code 200)
-    if response.status_code == 200:
-        try:
-            # Attempt to parse the JSON response
-            student_data = response.json()
-
-            # Display student data
-            st.subheader("Career Interests:")
-            st.write(student_data.get("career_interests", "N/A"))
+if response.status_code == 200:
+    student_data = response.json()
+    st.subheader("Career Interests:")
+    st.write(student_data.get("career_interests", "N/A"))
 
             st.subheader("Skills:")
             st.write(student_data.get("skills", []))
