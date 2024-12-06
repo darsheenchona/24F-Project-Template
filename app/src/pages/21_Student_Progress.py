@@ -14,7 +14,7 @@ st.title("View Student Progress")
 
 # Input student ID to fetch their progress
 student_id = st.text_input("Enter Student ID to View Progress")
-=======
+
 # Retrieve student profile and progress via the API (GET request)
 response = requests.get('http://api:4000/Student_Progress')  # API URL for student profile
 

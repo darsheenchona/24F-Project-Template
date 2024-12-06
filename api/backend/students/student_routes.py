@@ -6,18 +6,17 @@ student_bp = Blueprint('student_bp', __name__)
 
 # ------------------------------------------------------------
 # Retrieve student profile
-@student_bp.route('/students', methods=['GET'])
-def get_student_profile():
-    student_id = request.args.get('studentID')
+@student_bp.route('/students/<StudentID>', methods=['GET'])
+def get_student_profile(studentID):
     
-    if not student_id:
+    if not studentID:
         return make_response("Missing studentID parameter", 400)
 
     query = f'''
         SELECT Users.name, Users.email, Students.major, Students.year, Students.skills, Students.interests
         FROM Students
         JOIN Users ON Students.userID = Users.userID
-        WHERE Students.studentID = {student_id}
+        WHERE Students.studentID = {studentID}
     '''
     cursor = db.get_db().cursor()
     cursor.execute(query)
