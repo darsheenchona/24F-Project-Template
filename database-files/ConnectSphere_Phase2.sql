@@ -578,6 +578,17 @@ INSERT INTO AdvisorMeetings (StudentID, AdvisorID, MeetingDate, MeetingTime, Pur
 (14, 6, '2024-03-15', '09:45:00', 'Career Development', 'Focused on resume improvement'),
 (15, 7, '2024-03-16', '11:30:00', 'Job Opportunities', 'Discussed advanced positions in IT');
 
+-- Assuming you have some Recruiters already in the Recruiters table
+-- Example Recruiter IDs: 1, 2, 3
+
+INSERT INTO Reports (Title, Description, GeneratedBy)VALUES 
+('Monthly Report - September', 'This report covers all student placements in the month of September.', 1),
+('Quarterly Review', 'A quarterly review of the co-op program and student progress.', 2),
+('Placement Statistics', 'Detailed analysis of student placement success rates for 2023.', 3),
+('Year-End Report', 'A comprehensive report on student placements and outcomes for the year.', 1),
+('Co-op Program Review', 'An analysis of the overall co-op program including feedback from students and companies.', 2);
+
+
 INSERT INTO Events (StudentID, EventName, CompanyName, EventDate, EventType) VALUES
 -- Initial Entries
 (1, 'Tech Networking Night', 'TechCorp', '2024-02-10', 'Networking'),
