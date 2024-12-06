@@ -245,10 +245,9 @@ CREATE TABLE Tickets (
     TicketTime DATETIME DEFAULT CURRENT_TIMESTAMP,
     TicketStatus TEXT,
     TicketDetails TEXT,
-    FufilledBy INT DEFAULT 0,
+    FufilledBy INT DEFAULT 1,
     FOREIGN KEY (FufilledBy) REFERENCES ITEmployee(ITEmpID) 
 );
-
 
 
 INSERT INTO Users (Name, Email, Role, Password) VALUES

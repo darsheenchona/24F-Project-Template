@@ -18,31 +18,6 @@ def fetch_tickets():
         st.error(f"Error fetching tickets: {e}")
         st.session_state.tickets = []
 
-# Add new tickets
-st.write("### Create New Ticket")
-with st.form(key="create_ticket_form"):
-    details = st.text_area("Details")
-    status = st.selectbox("Status", ["Open", "In Progress", "Closed"])
-    submitted = st.form_submit_button("Create Ticket")
-    if submitted:
-        new_ticket = {
-            "TicketDetails": details,
-            "TicketStatus": status,
-            "TicketTime": datetime.now().isoformat(),
-        }
-        try:
-            response = requests.post("http://api:4000/it/tickets", json=new_ticket)
-            if response.status_code == 201:
-                st.success("Ticket created successfully.")
-                fetch_tickets()  # Refresh tickets
-            else:
-                st.error("Failed to create ticket.")
-                st.write("Response Content:", response.text)
-        except requests.exceptions.RequestException as e:
-            st.error(f"Error creating ticket: {e}")
-
-
-
 # Initialize session state for tickets
 if "tickets" not in st.session_state:
     st.session_state.tickets = []

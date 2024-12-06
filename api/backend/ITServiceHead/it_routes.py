@@ -41,15 +41,6 @@ def update_ticket_status(ticket_id):
     db.get_db().commit()
     return make_response("Ticket updated successfully", 200)
 
-# DELETE: Delete a ticket
-@it.route('/it/tickets/<int:ticket_id>', methods=['DELETE'])
-def delete_ticket(ticket_id):
-    query = f"DELETE FROM Tickets WHERE TicketID = {ticket_id}"
-    cursor = db.get_db().cursor()
-    cursor.execute(query)
-    db.get_db().commit()
-    return make_response("Ticket deleted successfully", 200)
-
 # GET: Fetch all IT employees
 @it.route('/it/employees', methods=['GET'])
 def get_it_employees():
@@ -93,3 +84,20 @@ def add_it_asset():
     cursor.execute(query)
     db.get_db().commit()
     return make_response("IT asset added successfully", 201)
+
+# PUT: Update an IT asset
+@it.route('/it/assets/<int:asset_id>', methods=['PUT'])
+def update_it_asset(asset_id):
+    data = request.json
+    query = f"""
+        UPDATE ITAssets
+        SET assetName = '{data['assetName']}',
+            ITStatus = '{data['ITStatus']}',
+            assetType = '{data['assetType']}',
+            assetDetails = '{data['assetDetails']}'
+        WHERE assetID = {asset_id}
+    """
+    cursor = db.get_db().cursor()
+    cursor.execute(query)
+    db.get_db().commit()
+    return make_response("IT asset updated successfully", 200)
