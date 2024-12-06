@@ -13,7 +13,7 @@ SideBarLinks()
 st.title("Update Co-op Placement")
 
 # Get current placement status
-placement_response = requests.get('http://localhost:4000/co-op/placement')
+placement_response = requests.get('http://api:4000/co-op/placement')
 
 if placement_response.status_code == 200:
     placement_data = placement_response.json()

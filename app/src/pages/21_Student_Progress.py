@@ -13,7 +13,7 @@ SideBarLinks()
 st.title("View Student Progress")
 
 # Retrieve student profile and progress via the API (GET request)
-response = requests.get('http://localhost:4000/Student_Progress')  # API URL for student profile
+response = requests.get('http://api:4000/Student_Progress')  # API URL for student profile
 
 if response.status_code == 200:
     student_data = response.json()
