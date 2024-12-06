@@ -5,7 +5,7 @@ from backend.CoopAdvisor.advisor_routes import coop_advisor
 from backend.simple.simple_routes import simple_routes
 from backend.recruiter.recruiter import recruiter
 from backend.ITServiceHead.it_routes import it
-
+from backend.students.student_routes import student_bp
 import os
 from dotenv import load_dotenv
 
@@ -45,6 +45,7 @@ def create_app():
     app.register_blueprint(recruiter)
     app.register_blueprint(coop_advisor)
     app.register_blueprint(it)
+    app.register_blueprint(student_bp)
 
     # Don't forget to return the app object
     return app

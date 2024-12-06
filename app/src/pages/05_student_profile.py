@@ -16,7 +16,7 @@ def display():
     st.write("Fetching your profile information...")
     try:
         # Corrected API URL with query parameter
-        response = requests.get(f"http://api:4000/api/student/students", params={"studentID": student_id})
+        response = requests.get(f"http://api:4000/student/students/{student_id}")
         
         if response.status_code == 200:
             profile = response.json()

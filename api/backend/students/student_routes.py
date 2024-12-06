@@ -4,20 +4,19 @@ from backend.db_connection import db
 # Define the Blueprint
 student_bp = Blueprint('student_bp', __name__)
 
+
 # ------------------------------------------------------------
 # Retrieve student profile
-@student_bp.route('/students', methods=['GET'])
-def get_student_profile():
-    student_id = request.args.get('studentID')
-    
-    if not student_id:
+@student_bp.route('/student/students/<studentID>', methods=['GET'])
+def get_student_profile(studentID):
+    if not studentID:
         return make_response("Missing studentID parameter", 400)
 
     query = f'''
-        SELECT Users.name, Users.email, Students.major, Students.year, Students.skills, Students.interests
+        SELECT Users.Name, Users.Email, Students.Major, Students.Year, Students.Skills, Students.Interests
         FROM Students
-        JOIN Users ON Students.userID = Users.userID
-        WHERE Students.studentID = {student_id}
+        JOIN Users ON Students.UserID = Users.UserID
+        WHERE Students.StudentID = {studentID}
     '''
     cursor = db.get_db().cursor()
     cursor.execute(query)
@@ -27,6 +26,7 @@ def get_student_profile():
         return make_response("Student not found", 404)
 
     return make_response(jsonify(profile), 200)
+
 
 # ------------------------------------------------------------
 # Retrieve applications
@@ -44,6 +44,7 @@ def get_applications():
 
     return make_response(jsonify(applications), 200)
 
+
 # Add a new application
 @student_bp.route('/applications', methods=['POST'])
 def add_application():
@@ -57,6 +58,7 @@ def add_application():
     db.get_db().commit()
 
     return make_response("Application added successfully", 201)
+
 
 # Update an application
 @student_bp.route('/applications/<application_id>', methods=['PUT'])
@@ -73,6 +75,7 @@ def update_application(application_id):
 
     return make_response("Application updated successfully", 200)
 
+
 # Remove an application
 @student_bp.route('/applications/<application_id>', methods=['DELETE'])
 def delete_application(application_id):
@@ -84,6 +87,7 @@ def delete_application(application_id):
     db.get_db().commit()
 
     return make_response("Application removed successfully", 200)
+
 
 # ------------------------------------------------------------
 # Retrieve bookmarks
@@ -101,6 +105,7 @@ def get_bookmarks():
 
     return make_response(jsonify(bookmarks), 200)
 
+
 # Add a new bookmark
 @student_bp.route('/bookmarks', methods=['POST'])
 def add_bookmark():
@@ -115,6 +120,7 @@ def add_bookmark():
 
     return make_response("Bookmark added successfully", 201)
 
+
 # Remove a bookmark
 @student_bp.route('/bookmarks/<bookmark_id>', methods=['DELETE'])
 def delete_bookmark(bookmark_id):
@@ -126,6 +132,7 @@ def delete_bookmark(bookmark_id):
     db.get_db().commit()
 
     return make_response("Bookmark removed successfully", 200)
+
 
 # ------------------------------------------------------------
 # Fetch recommendations
@@ -143,6 +150,7 @@ def get_recommendations():
 
     return make_response(jsonify(recommendations), 200)
 
+
 # ------------------------------------------------------------
 # Fetch advisor meetings
 @student_bp.route('/advisor-meetings', methods=['GET'])
@@ -159,6 +167,7 @@ def get_advisor_meetings():
 
     return make_response(jsonify(meetings), 200)
 
+
 # Schedule a new meeting
 @student_bp.route('/advisor-meetings', methods=['POST'])
 def schedule_meeting():
@@ -172,6 +181,7 @@ def schedule_meeting():
     db.get_db().commit()
 
     return make_response("Meeting scheduled successfully", 201)
+
 
 # Update a meeting
 @student_bp.route('/advisor-meetings/<meeting_id>', methods=['PUT'])
@@ -187,6 +197,7 @@ def update_meeting(meeting_id):
     db.get_db().commit()
 
     return make_response("Meeting updated successfully", 200)
+
 
 # Cancel a meeting
 @student_bp.route('/advisor-meetings/<meeting_id>', methods=['DELETE'])
