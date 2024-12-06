@@ -192,6 +192,35 @@ CREATE TABLE Alumni (
     LinkedInProfile VARCHAR(255)
 );
 
+-- Create the ITEmployee table
+CREATE TABLE ITEmployee (
+    ITEmpID INT AUTO_INCREMENT PRIMARY KEY,
+    PlatformUsageMetrics TEXT,
+    SystemHealthLogs TEXT,
+    Email TEXT,
+    EmpFirstName TEXT,
+    EmpLastName TEXT
+);
+
+-- Create the ITAssets table
+CREATE TABLE ITAssets (
+    assetID INT AUTO_INCREMENT PRIMARY KEY,
+    assetName TEXT,
+    ITStatus TEXT,
+    assetType TEXT,
+    assetDetails TEXT,
+
+);
+-- Create the Tickets table 
+CREATE TABLE Tickets (
+    TicketID INT AUTO_INCREMENT PRIMARY KEY,
+    TicketTime DATETIME DEFAULT CURRENT_TIMESTAMP,
+    TicketStatus TEXT,
+    TicketDetails TEXT,
+    FufilledBy INT NOT NULL,
+    FOREIGN KEY (FufilledBy) REFERENCES ITEmployee(ITEmpID) 
+);
+
 INSERT INTO Users (Name, Email, Role, Password) VALUES
 ('Emily Watson', 'emily.watson@advisors.com', 'Advisor', 'EmilyAdvisor123#'),
 ('Michael Brown', 'michael.brown@advisors.com', 'Advisor', 'MichaelAdvisor@456'),
@@ -799,4 +828,72 @@ INSERT INTO Alumni (Name, GraduationYear, CoOpExperienceDetails, CurrentPosition
 ('Noah Rivera', 2020, 'Education Consultant Intern at InnovateEd', 'Education Consultant', 'InnovateEd', 'https://linkedin.com/in/noahrivera'),
 ('Grace Campbell', 2021, 'Research Assistant Intern at NeuroTech Labs', 'Research Scientist', 'NeuroTech Labs', 'https://linkedin.com/in/gracecampbell');
 
+
+INSERT INTO ITEmployee (Email, EmpFirstName, EmpLastName) VALUES
+('jdoe@company.com', 'John', 'Doe'),
+('asmith@company.com', 'Alice', 'Smith'),
+('mbrown@company.com', 'Michael', 'Brown'),
+('cwhite@company.com', 'Catherine', 'White'),
+('tjohnson@company.com', 'Thomas', 'Johnson'),
+('mgreen@company.com', 'Megan', 'Green'),
+('rwilson@company.com', 'Robert', 'Wilson'),
+('lcarter@company.com', 'Linda', 'Carter'),
+('pjames@company.com', 'Paul', 'James'),
+('ahall@company.com', 'Andrew', 'Hall'),
+('hclark@company.com', 'Hannah', 'Clark'),
+('ebranch@company.com', 'Emily', 'Branch'),
+('mmartin@company.com', 'Matthew', 'Martin'),
+('kroberts@company.com', 'Kelly', 'Roberts'),
+('dlee@company.com', 'Daniel', 'Lee'),
+('tadams@company.com', 'Timothy', 'Adams'),
+('jgonzalez@company.com', 'Jessica', 'Gonzalez'),
+('achavez@company.com', 'Aaron', 'Chavez'),
+('cpeterson@company.com', 'Christina', 'Peterson'),
+('nrobinson@company.com', 'Nathan', 'Robinson');
+
+INSERT INTO ITAssets (assetName, ITStatus, assetType, assetDetails)
+VALUES
+('Firewall', 'Operational', 'Hardware', 'Secures the company network from external threats'),
+('Load Balancer', 'Operational', 'Hardware', 'Distributes incoming traffic to servers'),
+('Database Server', 'Needs Maintenance', 'Hardware', 'Stores transactional and analytics data'),
+('Cloud Storage', 'Operational', 'Service', 'AWS S3 for backups and archives'),
+('Endpoint Security Software', 'Needs Update', 'Software', 'Antivirus and malware protection for user endpoints'),
+('Laptop', 'Operational', 'Hardware', 'Dell Latitude for remote work'),
+('Printer', 'Operational', 'Hardware', 'HP LaserJet for office printing'),
+('Email Server', 'Needs Maintenance', 'Hardware', 'Handles all company email traffic'),
+('Switch', 'Operational', 'Hardware', 'Cisco Catalyst for LAN connectivity'),
+('Router', 'Operational', 'Hardware', 'Handles all outgoing internet traffic'),
+('Virtual Machine', 'Operational', 'Software', 'Windows Server 2019 for app hosting'),
+('Antivirus Software', 'Operational', 'Software', 'McAfee Enterprise Security Suite'),
+('Patch Management Software', 'Operational', 'Software', 'Automates software patching across the network'),
+('Backup Server', 'Needs Maintenance', 'Hardware', 'Stores daily backups for disaster recovery'),
+('Firewall Software', 'Operational', 'Software', 'Sophos for network security'),
+('File Server', 'Operational', 'Hardware', 'Shared storage for company files'),
+('CRM Software', 'Operational', 'Software', 'Manages customer relationships and interactions'),
+('DNS Server', 'Operational', 'Hardware', 'Resolves domain names to IP addresses'),
+('Patch Panel', 'Operational', 'Hardware', 'Connects network cables in server racks'),
+('Network Analyzer', 'Operational', 'Software', 'Monitors network performance and detects anomalies');
+
+
+INSERT INTO Tickets (TicketStatus, TicketDetails, FufilledBy) VALUES
+('Open', 'Resolve slow database queries', 1),
+('In Progress', 'Fix network latency issues', 2),
+('Closed', 'Update endpoint security software', 3),
+('Open', 'Install new patches on servers', 4),
+('Closed', 'Configure new firewall rules', 5),
+('In Progress', 'Replace failed hard drive on database server', 6),
+('Open', 'Investigate high CPU usage on email server', 7),
+('Closed', 'Update antivirus definitions on all endpoints', 8),
+('Open', 'Reboot file server after maintenance', 9),
+('Closed', 'Fix network switch connectivity issues', 10),
+('Open', 'Troubleshoot VPN connection for remote employees', 11),
+('In Progress', 'Analyze traffic for possible DDoS attack', 12),
+('Closed', 'Implement new group policies for user access', 13),
+('Open', 'Replace aging printer hardware', 14),
+('In Progress', 'Test new backup server configuration', 15),
+('Open', 'Deploy patch management software update', 16),
+('Closed', 'Resolve user login issues on CRM software', 17),
+('Open', 'Optimize network performance for cloud storage', 18),
+('In Progress', 'Audit DNS server for configuration errors', 19),
+('Closed', 'Fix broken patch panel in server room', 20);
 
