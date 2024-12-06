@@ -14,6 +14,7 @@ DROP TABLE IF EXISTS RecommendedJobs;
 DROP TABLE IF EXISTS SavedJobs;
 DROP TABLE IF EXISTS Applications;
 DROP TABLE IF EXISTS Jobs;
+DROP TABLE IF EXISTS Employers
 DROP TABLE IF EXISTS CoOpAdvisors;
 DROP TABLE IF EXISTS Alumni;
 DROP TABLE IF EXISTS Recruiters;
@@ -89,6 +90,14 @@ CREATE TABLE Jobs (
     SalaryRange VARCHAR(50),
     Progress INT DEFAULT 0,
     FOREIGN KEY (PostedBy) REFERENCES Recruiters(RecruiterID) ON DELETE CASCADE
+);
+
+CREATE TABLE Employers (
+    employerID INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    industry TEXT,
+    location TEXT,
+    status TEXT DEFAULT 'active'  -- active or inactive
 );
 
 -- Create the Applications table
@@ -450,6 +459,18 @@ INSERT INTO Jobs (Title, Company, Description, Requirements, Status, PostedBy, D
 ('Cybersecurity Analyst', 'CyberShield Security', 'Monitor and secure networks', 'Network Security, Kali Linux', 'Open', 14, '2024-01-19', '2024-02-19', 'New York', '$30/hr'),
 ('Data Scientist', 'QuantumAI Labs', 'Analyze large datasets and build ML models', 'Python, R, Machine Learning', 'Open', 12, '2024-01-20', '2024-02-20', 'Boston', '$35/hr');
 
+INSERT INTO Employers (name, industry, location, status) VALUES
+('Tech Innovations Ltd.', 'Technology', 'San Francisco, CA', 'active'),
+('GreenBuild Corp.', 'Construction', 'Los Angeles, CA', 'active'),
+('DataMinds Analytics', 'Data Science', 'New York, NY', 'active'),
+('HealthPlus Medical', 'Healthcare', 'Chicago, IL', 'inactive'),
+('AutoTech Solutions', 'Automotive', 'Detroit, MI', 'active'),
+('Creative Minds Agency', 'Marketing', 'Miami, FL', 'inactive'),
+('EcoGreen Enterprises', 'Environmental', 'Seattle, WA', 'active'),
+('FinTech Partners', 'Finance', 'Boston, MA', 'active'),
+('Smart Systems Inc.', 'Electronics', 'Austin, TX', 'inactive'),
+('Global Retailers', 'Retail', 'Dallas, TX', 'active');
+
 INSERT INTO Applications (StudentID, JobID, Status, DateApplied, ReviewScore, Feedback) VALUES
 (1, 1, 'Pending', '2024-01-20', NULL, NULL),
 (2, 2, 'Accepted', '2024-01-22', 85, 'Great match for the role'),
@@ -577,17 +598,6 @@ INSERT INTO AdvisorMeetings (StudentID, AdvisorID, MeetingDate, MeetingTime, Pur
 (13, 5, '2024-03-14', '12:00:00', 'Networking Preparation', 'Suggested ideal LinkedIn optimizations'),
 (14, 6, '2024-03-15', '09:45:00', 'Career Development', 'Focused on resume improvement'),
 (15, 7, '2024-03-16', '11:30:00', 'Job Opportunities', 'Discussed advanced positions in IT');
-
--- Assuming you have some Recruiters already in the Recruiters table
--- Example Recruiter IDs: 1, 2, 3
-
-INSERT INTO Reports (Title, Description, GeneratedBy)VALUES 
-('Monthly Report - September', 'This report covers all student placements in the month of September.', 1),
-('Quarterly Review', 'A quarterly review of the co-op program and student progress.', 2),
-('Placement Statistics', 'Detailed analysis of student placement success rates for 2023.', 3),
-('Year-End Report', 'A comprehensive report on student placements and outcomes for the year.', 1),
-('Co-op Program Review', 'An analysis of the overall co-op program including feedback from students and companies.', 2);
-
 
 INSERT INTO Events (StudentID, EventName, CompanyName, EventDate, EventType) VALUES
 -- Initial Entries
