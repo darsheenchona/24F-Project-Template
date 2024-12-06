@@ -80,8 +80,8 @@ def get_advised_students():
 
 
 # retrieve specific student advised by a co-op advisor
-@coop_advisor.route('/students/<student_id>', methods=['GET'])
-def get_student_details(student_id):
+@coop_advisor.route('/students/<StudentID>', methods=['GET'])
+def get_student_details(StudentID):
     query = '''
         SELECT Users.name, Students.major, Students.gpa, Students.email
         FROM Students
@@ -89,7 +89,7 @@ def get_student_details(student_id):
         WHERE Students.studentID = %s
     '''
     cursor = db.get_db().cursor()
-    cursor.execute(query, (student_id,))
+    cursor.execute(query, (StudentID,))
     student = cursor.fetchone()
 
     if not student:
@@ -100,8 +100,8 @@ def get_student_details(student_id):
 
 
 # update student details
-@coop_advisor.route('/students/<student_id>', methods=['PUT'])
-def update_student_details(student_id):
+@coop_advisor.route('/students/<StudentID>', methods=['PUT'])
+def update_student_details(StudentID):
     data = request.json
     query = '''
         UPDATE Students
@@ -109,76 +109,103 @@ def update_student_details(student_id):
         WHERE studentID = %s
     '''
     cursor = db.get_db().cursor()
-    cursor.execute(query, (data["major"], data["gpa"], data["email"], student_id))
+    cursor.execute(query, (data["major"], data["gpa"], data["email"], StudentID))
     db.get_db().commit()
 
     return make_response("Student details updated successfully", 200)
 
 
 # ------------------------------------------------------------
-# retrieve the student's co-op placement history
-@coop_advisor.route('/students/<student_id>/placements', methods=['GET'])
-def get_student_placements(student_id):
-    query = '''
-        SELECT Placement.placementID, Placement.company, Placement.position, 
-               Placement.startDate, Placement.endDate, Placement.status
+@coop_advisor.route('/students/<int:studentID>/placements', methods=['GET'])
+def get_student_placements(studentID):
+    query = f'''
+        SELECT placementID, company, position, startDate, endDate, status
         FROM Placement
-        WHERE Placement.studentID = %s
+        WHERE StudentID = {studentID}
     '''
+    
     cursor = db.get_db().cursor()
-    cursor.execute(query, (student_id,))
+    cursor.execute(query)
     placements = cursor.fetchall()
+    
+    # Log the result of the query
+    logger.info(f"Query result: {placements}")
 
     if not placements:
-        return make_response("No placements found for this student", 404)
+        return make_response(jsonify({"error": "No placements found for this student."}), 404)
 
     return make_response(jsonify(placements), 200)
 
-
-
-# add a new placement for a student
-@coop_advisor.route('/students/<student_id>/placements', methods=['POST'])
-def add_student_placement(student_id):
+# Add a new placement for a student
+@coop_advisor.route('/students/<StudentID>/placements', methods=['POST'])
+def add_student_placement(StudentID):
     data = request.json
-    query = '''
+    
+    # Validate required fields
+    if not all(field in data for field in ['company', 'position', 'startDate', 'endDate', 'status']):
+        return make_response(jsonify({"error": "Missing required fields"}), 400)
+    
+    # Using string interpolation
+    query = f'''
         INSERT INTO Placement (studentID, company, position, startDate, endDate, status)
-        VALUES (%s, %s, %s, %s, %s, %s)
+        VALUES ({StudentID}, '{data["company"]}', '{data["position"]}', '{data["startDate"]}', '{data["endDate"]}', '{data["status"]}')
     '''
+    
     cursor = db.get_db().cursor()
-    cursor.execute(query, (student_id, data["company"], data["position"], data["startDate"], data["endDate"], data["status"]))
-    db.get_db().commit()
+    try:
+        cursor.execute(query)
+        db.get_db().commit()
+        return make_response(jsonify({"message": "Placement added successfully."}), 201)
+    except Exception as e:
+        logger.error(f"Error inserting placement: {e}")
+        return make_response(jsonify({"error": "Failed to add placement."}), 500)
 
-    return make_response("Placement added successfully", 201)
 
-
-# update placement details
-@coop_advisor.route('/students/<student_id>/placements/<placement_id>', methods=['PUT'])
-def update_placement(student_id, placement_id):
+# Update placement details
+@coop_advisor.route('/students/<StudentID>/placements/<placementID>', methods=['PUT'])
+def update_placement(StudentID, placementID):
     data = request.json
-    query = '''
+    
+    # Validate required fields
+    if not all(field in data for field in ['company', 'position', 'startDate', 'endDate', 'status']):
+        return make_response(jsonify({"error": "Missing required fields"}), 400)
+    
+    # Using string interpolation
+    query = f'''
         UPDATE Placement
-        SET company = %s, position = %s, startDate = %s, endDate = %s, status = %s
-        WHERE placementID = %s AND studentID = %s
+        SET company = '{data["company"]}', position = '{data["position"]}', startDate = '{data["startDate"]}', endDate = '{data["endDate"]}', status = '{data["status"]}'
+        WHERE placementID = {placementID} AND studentID = {StudentID}
     '''
+    
     cursor = db.get_db().cursor()
-    cursor.execute(query, (data["company"], data["position"], data["startDate"], data["endDate"], data["status"], placement_id, student_id))
-    db.get_db().commit()
+    try:
+        cursor.execute(query)
+        db.get_db().commit()
+        return make_response(jsonify({"message": "Placement updated successfully."}), 200)
+    except Exception as e:
+        logger.error(f"Error updating placement: {e}")
+        return make_response(jsonify({"error": "Failed to update placement."}), 500)
 
-    return make_response("Placement updated successfully", 200)
 
 
-# delete placement
-@coop_advisor.route('/students/<student_id>/placements/<placement_id>', methods=['DELETE'])
-def delete_placement(student_id, placement_id):
-    query = '''
+# Delete placement
+@coop_advisor.route('/students/<StudentID>/placements/<placementID>', methods=['DELETE'])
+def delete_placement(StudentID, placementID):
+    # Using string interpolation
+    query = f'''
         DELETE FROM Placement
-        WHERE placementID = %s AND studentID = %s
+        WHERE placementID = {placementID} AND StudentID = {StudentID}
     '''
+    
     cursor = db.get_db().cursor()
-    cursor.execute(query, (placement_id, student_id))
-    db.get_db().commit()
+    try:
+        cursor.execute(query)
+        db.get_db().commit()
+        return make_response(jsonify({"message": "Placement deleted successfully."}), 200)
+    except Exception as e:
+        logger.error(f"Error deleting placement: {e}")
+        return make_response(jsonify({"error": "Failed to delete placement."}), 500)
 
-    return make_response("Placement deleted successfully", 200)
 
 
 # ------------------------------------------------------------

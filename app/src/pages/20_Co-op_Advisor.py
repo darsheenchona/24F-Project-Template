@@ -34,6 +34,3 @@ if st.button('Manage Employers', type='primary', use_container_width=True):
 if st.button('Advisor Profile', type='primary', use_container_width=True):
     st.switch_page('pages/24_Advisor_Profile.py')
 
-
-
-
