@@ -15,6 +15,7 @@ DROP TABLE IF EXISTS SavedJobs;
 DROP TABLE IF EXISTS Applications;
 DROP TABLE IF EXISTS Placement;
 DROP TABLE IF EXISTS Jobs;
+DROP TABLE IF EXISTS Employers
 DROP TABLE IF EXISTS CoOpAdvisors;
 DROP TABLE IF EXISTS Alumni;
 DROP TABLE IF EXISTS Recruiters;
@@ -101,6 +102,14 @@ CREATE TABLE Jobs (
     SalaryRange VARCHAR(50),
     Progress INT DEFAULT 0,
     FOREIGN KEY (PostedBy) REFERENCES Recruiters(RecruiterID) ON DELETE CASCADE
+);
+
+CREATE TABLE Employers (
+    employerID INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    industry TEXT,
+    location TEXT,
+    status TEXT DEFAULT 'active'  -- active or inactive
 );
 
 -- Create the Applications table
@@ -465,6 +474,18 @@ INSERT INTO Jobs (Title, Company, Description, Requirements, Status, PostedBy, D
 ('Backend Developer Intern', 'GigaTech', 'Work on server-side logic and database management', 'Python, Django, SQL', 'Open', 22, '2024-01-18', '2024-02-18', 'Remote', '$25/hr'),
 ('Cybersecurity Analyst', 'CyberShield Security', 'Monitor and secure networks', 'Network Security, Kali Linux', 'Open', 14, '2024-01-19', '2024-02-19', 'New York', '$30/hr'),
 ('Data Scientist', 'QuantumAI Labs', 'Analyze large datasets and build ML models', 'Python, R, Machine Learning', 'Open', 12, '2024-01-20', '2024-02-20', 'Boston', '$35/hr');
+
+INSERT INTO Employers (name, industry, location, status) VALUES
+('Tech Innovations Ltd.', 'Technology', 'San Francisco, CA', 'active'),
+('GreenBuild Corp.', 'Construction', 'Los Angeles, CA', 'active'),
+('DataMinds Analytics', 'Data Science', 'New York, NY', 'active'),
+('HealthPlus Medical', 'Healthcare', 'Chicago, IL', 'inactive'),
+('AutoTech Solutions', 'Automotive', 'Detroit, MI', 'active'),
+('Creative Minds Agency', 'Marketing', 'Miami, FL', 'inactive'),
+('EcoGreen Enterprises', 'Environmental', 'Seattle, WA', 'active'),
+('FinTech Partners', 'Finance', 'Boston, MA', 'active'),
+('Smart Systems Inc.', 'Electronics', 'Austin, TX', 'inactive'),
+('Global Retailers', 'Retail', 'Dallas, TX', 'active');
 
 INSERT INTO Applications (StudentID, JobID, Status, DateApplied, ReviewScore, Feedback) VALUES
 (1, 1, 'Pending', '2024-01-20', NULL, NULL),
