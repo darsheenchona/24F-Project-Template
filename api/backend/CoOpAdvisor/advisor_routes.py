@@ -209,4 +209,19 @@ def delete_report(report_id):
     return make_response("Report deleted successfully", 200)
 
 
+# Blueprint for recruiter-related endpoints
+@coop_advisor.route('/employers', methods=['GET'])
+def get_employers():
+    query = '''
+        SELECT employerID, name, industry, location
+        FROM Employers
+    '''
+    cursor = db.get_db().cursor()
+    cursor.execute(query)
+    employers = cursor.fetchall()
+
+    if not employers:
+        return make_response("No employers found", 404)
+
+    return make_response(jsonify(employers), 200)
 
