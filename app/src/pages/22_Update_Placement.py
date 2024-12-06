@@ -13,7 +13,7 @@ SideBarLinks()
 st.title("Update Co-op Placement")
 
 # Get current placement status
-placement_response = requests.get('http://localhost:8501/co-op/placement')
+placement_response = requests.get('http://localhost:4000/co-op/placement')
 
 if placement_response.status_code == 200:
     placement_data = placement_response.json()
@@ -32,7 +32,7 @@ if placement_response.status_code == 200:
             "deadlines": str(new_deadline),
             "milestones": new_milestones.split(", ")
         }
-        update_response = requests.put('http://localhost:8501/co-op/placement', json=update_data)
+        update_response = requests.put('http://localhost:4000/co-op/placement', json=update_data)
         
         if update_response.status_code == 200:
             st.success("Placement updated successfully!")
