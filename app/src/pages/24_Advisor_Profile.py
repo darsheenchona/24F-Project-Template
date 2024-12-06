@@ -10,7 +10,7 @@ st.set_page_config(layout='wide')
 logger = logging.getLogger(__name__)
 
 # Set the base URL for your Flask API (Adjust the URL depending on the Flask app's location)
-BASE_URL = "http://api:4000"  # Update with correct address for Flask API
+BASE_URL = "http://api:4000"  # Update with correct address for Flask API (change to localhost if running locally)
 
 # Display the appropriate sidebar links for the role of the logged-in user (optional)
 from modules.nav import SideBarLinks
@@ -55,15 +55,19 @@ if advisor_id:
     email = st.text_input("New Email:")
 
     if st.button("Update Profile"):
-        data = {"department": department, "name": name, "email": email}
-        try:
-            response = requests.put(f"{BASE_URL}/coop_advisor/profile?advisorID={advisor_id}", json=data)
-            if response.status_code == 200:
-                st.success("Profile updated successfully!")
-            else:
-                st.error("Failed to update profile.")
-        except Exception as e:
-            st.error(f"Error: {e}")
+        # Validate inputs before sending the request
+        if name and email and department:
+            data = {"department": department, "name": name, "email": email}
+            try:
+                response = requests.put(f"{BASE_URL}/coop_advisor/profile?advisorID={advisor_id}", json=data)
+                if response.status_code == 200:
+                    st.success("Profile updated successfully!")
+                else:
+                    st.error("Failed to update profile.")
+            except Exception as e:
+                st.error(f"Error: {e}")
+        else:
+            st.warning("Please fill in all fields to update the profile.")
 else:
     st.warning("Please enter an Advisor ID to update the profile.")
 
@@ -135,15 +139,21 @@ if advisor_id:
     report_description = st.text_area("Report Description:")
 
     if st.button("Generate Report"):
-        data = {"title": report_title, "description": report_description}
-        try:
-            response = requests.post(f"{BASE_URL}/coop_advisor/reports?advisorID={advisor_id}", json=data)
-            if response.status_code == 201:
-                st.success("Report generated successfully!")
-            else:
-                st.error("Failed to generate report.")
-        except Exception as e:
-            st.error(f"Error: {e}")
+        # Validate that report title and description are provided
+        if report_title and report_description:
+            data = {"title": report_title, "description": report_description}
+            try:
+                response = requests.post(f"{BASE_URL}/coop_advisor/reports?advisorID={advisor_id}", json=data)
+                if response.status_code == 201:
+                    st.success("Report generated successfully!")
+                else:
+                    st.error("Failed to generate report.")
+            except Exception as e:
+                st.error(f"Error: {e}")
+        else:
+            st.warning("Please provide both a title and description for the report.")
+else:
+    st.warning("Please enter an Advisor ID to generate the report.")
 
 # ---------------------------------------------------------
 # Delete Report
