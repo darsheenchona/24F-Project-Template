@@ -36,42 +36,53 @@ SideBarLinks(show_home=True)
 logger.info("Loading the Home page of the app")
 st.title('Connect Sphere')
 st.write('\n\n')
-st.write('### HI! As which user would you like to log in?')
+st.write('### HI! Please Log In')
 
 # For each of the user personas for which we are implementing
 # functionality, we put a button on the screen that the user 
 # can click to MIMIC logging in as that mock user. 
 
-if st.button("Act as John, a Political Strategy Advisor", 
+if st.button("Student", 
             type = 'primary', 
             use_container_width=True):
     # when user clicks the button, they are now considered authenticated
     st.session_state['authenticated'] = True
     # we set the role of the current user
-    st.session_state['role'] = 'pol_strat_advisor'
+    st.session_state['role'] = 'student'
     # we add the first name of the user (so it can be displayed on 
     # subsequent pages). 
     st.session_state['first_name'] = 'John'
     # finally, we ask streamlit to switch to another page, in this case, the 
     # landing page for this particular user type
-    logger.info("Logging in as Political Strategy Advisor Persona")
-    st.switch_page('pages/00_Pol_Strat_Home.py')
+    logger.info("Logging in as a Student")
+    st.switch_page('pages/00_Student.py')
 
-if st.button('Act as Mohammad, an USAID worker', 
+if st.button('Recruiter', 
             type = 'primary', 
             use_container_width=True):
     st.session_state['authenticated'] = True
-    st.session_state['role'] = 'usaid_worker'
+    st.session_state['role'] = 'recuiter'
     st.session_state['first_name'] = 'Mohammad'
-    st.switch_page('pages/10_USAID_Worker_Home.py')
+    logger.info("Logging in as a Recruiter")
+    st.switch_page('pages/10_Recruiter.py')
 
-if st.button('Act as Co-op Advisor', 
+if st.button('Co-op Advisor', 
             type = 'primary', 
             use_container_width=True):
     st.session_state['authenticated'] = True
     st.session_state['role'] = 'administrator'
-    st.session_state['first_name'] = 'SysAdmin'
+    st.session_state['first_name'] = 'George'
+    logger.info("Logging in as a Co-op Advisor")
     st.switch_page('pages/20_Co-op_Advisor.py')
+
+if st.button('IT Service Head', 
+            type = 'primary', 
+            use_container_width=True):
+    st.session_state['authenticated'] = True
+    st.session_state['role'] = 'it_service_head'
+    st.session_state['first_name'] = 'Jack'
+    logger.info("Logging in as a IT Service Head")
+    st.switch_page('pages/40_ITService.py')
 
 
 
