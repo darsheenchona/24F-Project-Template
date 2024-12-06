@@ -7,41 +7,19 @@ st.set_page_config(layout="wide")
 SideBarLinks()
 
 st.title("Manage Tickets")
-# Function to fetch tickets
+
+# Function to fetch and sort tickets
 def fetch_tickets():
     try:
         response = requests.get("http://api:4000/it/tickets")
         response.raise_for_status()  # Raise an error for non-200 status codes
         tickets = response.json()  # Convert JSON response to Python dict
+        # Sort tickets by TicketTime in descending order (newest first)
+        tickets.sort(key=lambda x: x["TicketTime"], reverse=True)
         st.session_state.tickets = tickets  # Cache the tickets in session state
     except requests.exceptions.RequestException as e:
         st.error(f"Error fetching tickets: {e}")
         st.session_state.tickets = []
-
-# Add new tickets
-st.write("### Create New Ticket")
-with st.form(key="create_ticket_form"):
-    details = st.text_area("Details")
-    status = st.selectbox("Status", ["Open", "In Progress", "Closed"])
-    submitted = st.form_submit_button("Create Ticket")
-    if submitted:
-        new_ticket = {
-            "TicketDetails": details,
-            "TicketStatus": status,
-            "TicketTime": datetime.now().isoformat(),
-        }
-        try:
-            response = requests.post("http://api:4000/it/tickets", json=new_ticket)
-            if response.status_code == 201:
-                st.success("Ticket created successfully.")
-                fetch_tickets()  # Refresh tickets
-            else:
-                st.error("Failed to create ticket.")
-                st.write("Response Content:", response.text)
-        except requests.exceptions.RequestException as e:
-            st.error(f"Error creating ticket: {e}")
-
-
 
 # Initialize session state for tickets
 if "tickets" not in st.session_state:
@@ -71,7 +49,7 @@ if not st.session_state.tickets:
     fetch_tickets()
 
 # Display tickets
-st.write("### Existing Tickets")
+st.write("### Existing Tickets (Sorted by Newest)")
 for ticket in st.session_state.tickets:
     # Display ticket information
     st.write(
@@ -102,5 +80,3 @@ for ticket in st.session_state.tickets:
     elif st.session_state.ticket_to_update is None:
         if st.button(f"Update Ticket {ticket['TicketID']}", key=f"update_btn_{ticket['TicketID']}"):
             st.session_state.ticket_to_update = ticket["TicketID"]
-
-

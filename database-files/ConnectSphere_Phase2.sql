@@ -13,6 +13,7 @@ DROP TABLE IF EXISTS AdvisorMeetings;
 DROP TABLE IF EXISTS RecommendedJobs;
 DROP TABLE IF EXISTS SavedJobs;
 DROP TABLE IF EXISTS Applications;
+DROP TABLE IF EXISTS Placement;
 DROP TABLE IF EXISTS Jobs;
 DROP TABLE IF EXISTS CoOpAdvisors;
 DROP TABLE IF EXISTS Alumni;
@@ -46,6 +47,19 @@ CREATE TABLE CoOpAdvisors (
     ActiveStudentCount INT,
     FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
 );
+
+-- Create the Placement table
+CREATE TABLE Placement (
+    placementID INT AUTO_INCREMENT PRIMARY KEY,
+    StudentID INT NOT NULL,
+    company VARCHAR(100) NOT NULL,
+    position VARCHAR(100) NOT NULL,
+    startDate DATE NOT NULL,
+    endDate DATE NOT NULL,
+    status ENUM('Active', 'Completed', 'Pending') NOT NULL,
+    FOREIGN KEY (StudentID) REFERENCES Students(StudentID) ON DELETE CASCADE
+);
+
 
 -- Create the Students table
 CREATE TABLE Students (
@@ -245,10 +259,9 @@ CREATE TABLE Tickets (
     TicketTime DATETIME DEFAULT CURRENT_TIMESTAMP,
     TicketStatus TEXT,
     TicketDetails TEXT,
-    FufilledBy INT DEFAULT 0,
+    FufilledBy INT DEFAULT 1,
     FOREIGN KEY (FufilledBy) REFERENCES ITEmployee(ITEmpID) 
 );
-
 
 
 INSERT INTO Users (Name, Email, Role, Password) VALUES
@@ -283,7 +296,10 @@ INSERT INTO Users (Name, Email, Role, Password) VALUES
 ('Grace Collins', 'grace.collins@advisors.com', 'Advisor', 'GraceAdvisorSecure@'),
 ('Lucas Bell', 'lucas.bell@advisors.com', 'Advisor', 'LucasAdvises#2024');
 
-
+INSERT INTO Placement (StudentID, company, position, startDate, endDate, status) VALUES
+(1, 'Google', 'Software Engineer', '2023-06-01', '2023-12-01', 'Active'),
+(1, 'Facebook', 'Data Analyst', '2024-01-01', '2024-06-01', 'Pending'),
+(2, 'Microsoft', 'UX Designer', '2023-07-01', '2023-12-01', 'Completed');
 
 INSERT INTO CoOpAdvisors (UserID, Department, MeetingAvailability, ActiveStudentCount) VALUES
 (1, 'Computer Science', 'Monday, Wednesday', 25),

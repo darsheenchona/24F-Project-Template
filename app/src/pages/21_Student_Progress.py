@@ -15,6 +15,20 @@ st.title("View Student Progress")
 # Input student ID to fetch their progress
 student_id = st.text_input("Enter Student ID to View Progress")
 
+
+# Proceed only if a valid student ID is entered
+if student_id:
+    # Retrieve student profile and progress via the API (GET request)
+    response = requests.get(f'http://api:4000/Student_Progress/{student_id}')  # API URL for student profile
+
+    if response.status_code == 200:
+        student_data = response.json()
+
+
+# Retrieve student profile and progress via the API (GET request)
+response = requests.get('http://api:4000/Student_Progress')  # API URL for student profile
+
+
 # Proceed only if a valid student ID is entered
 if student_id:
     # Retrieve student profile and progress via the API (GET request)
