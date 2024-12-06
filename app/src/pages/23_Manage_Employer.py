@@ -13,7 +13,7 @@ SideBarLinks()
 st.title("Manage Employers")
 
 # Retrieve list of employers
-employer_response = requests.get('http://localhost:4000/employers')
+employer_response = requests.get('http://api:4000/employers')
 
 if employer_response.status_code == 200:
     employers = employer_response.json()
@@ -24,7 +24,7 @@ if employer_response.status_code == 200:
     # Deactivate employer functionality
     employer_id_to_deactivate = st.number_input("Enter Employer ID to deactivate:", min_value=1)
     if st.button("Deactivate Employer"):
-        deactivate_response = requests.put(f'http://localhost:4000/employers/{employer_id_to_deactivate}', json={"status": "inactive"})
+        deactivate_response = requests.put(f'http://api:4000/employers/{employer_id_to_deactivate}', json={"status": "inactive"})
         if deactivate_response.status_code == 200:
             st.success(f"Employer with ID {employer_id_to_deactivate} deactivated successfully!")
         else:
