@@ -13,30 +13,39 @@ SideBarLinks()
 st.title("Update Co-op Placement")
 
 # Get current placement status
-placement_response = requests.get('http://host.docker.internal:4000/co-op/placement')
-
-if placement_response.status_code == 200:
-    placement_data = placement_response.json()
-    st.subheader("Current Placement Status")
-    st.write(placement_data.get("placement_status", "N/A"))
+def manage_placements():
+    student_id = st.text_input("Enter Student ID for Placement Management")
     
-    # Input fields to update placement status, deadlines, and milestones
-    new_status = st.text_input("New Placement Status:", value=placement_data.get("placement_status", ""))
-    new_deadline = st.date_input("New Deadline:", value=placement_data.get("deadlines", ""))
-    new_milestones = st.text_area("New Milestones:", value=", ".join(placement_data.get("milestones", [])))
-    
-    # Update the co-op placement when the button is clicked
-    if st.button("Update Placement"):
-        update_data = {
-            "placement_status": new_status,
-            "deadlines": str(new_deadline),
-            "milestones": new_milestones.split(", ")
-        }
-        update_response = requests.put('http://host.docker.api:4000/co-op/placement', json=update_data)
-        
-        if update_response.status_code == 200:
-            st.success("Placement updated successfully!")
+    if st.button("View Placements"):
+        response = requests.get(f"http://api:4000/coop_advisor/students/{student_id}/placements")
+        if response.status_code == 200:
+            placements = response.json()
+            for placement in placements:
+                st.write(f"Company: {placement['company']} - Position: {placement['position']} - Status: {placement['status']}")
         else:
-            st.error("Failed to update placement.")
-else:
-    st.error("Error fetching current placement data.")
+            st.error("No placements found.")
+
+    # Optionally, add functionality for adding or updating placements here.
+    if st.button("Add Placement"):
+        add_placement(student_id)
+
+def add_placement(student_id):
+    company = st.text_input("Enter Company")
+    position = st.text_input("Enter Position")
+    start_date = st.date_input("Start Date")
+    end_date = st.date_input("End Date")
+    status = st.selectbox("Status", ["Active", "Completed", "Pending"])
+    
+    if st.button("Add Placement"):
+        data = {
+            "company": company,
+            "position": position,
+            "startDate": start_date,
+            "endDate": end_date,
+            "status": status
+        }
+        response = requests.post(f"http://api:4000/coop_advisor/students/{student_id}/placements", json=data)
+        if response.status_code == 201:
+            st.success("Placement added successfully.")
+        else:
+            st.error("Failed to add placement.")

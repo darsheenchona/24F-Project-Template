@@ -53,7 +53,7 @@ def update_coop_advisor_profile():
 
 # ------------------------------------------------------------
 # retrieve list of students advised by a co-op advisor
-@coop_advisor.route('/students', methods=['GET'])
+@coop_advisor.route('/Students', methods=['GET'])
 def get_advised_students():
     advisor_id = request.args.get('advisorID')
     query = '''

@@ -28,7 +28,4 @@ if response.status_code == 200:
 else:
     st.error("Error fetching student progress data.")
 
-# Add additional buttons for more actions if needed
-if st.button('Refresh Data'):
-    # Trigger a refresh of student data or any updates from the API
-    st.experimental_rerun()
+
