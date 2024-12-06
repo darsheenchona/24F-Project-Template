@@ -16,7 +16,6 @@ DROP TABLE IF EXISTS Applications;
 DROP TABLE IF EXISTS Placement;
 DROP TABLE IF EXISTS Jobs;
 DROP TABLE IF EXISTS Employers
-DROP TABLE IF EXISTS Employers
 DROP TABLE IF EXISTS CoOpAdvisors;
 DROP TABLE IF EXISTS Alumni;
 DROP TABLE IF EXISTS Recruiters;
@@ -113,13 +112,6 @@ CREATE TABLE Employers (
     status TEXT DEFAULT 'active'  -- active or inactive
 );
 
-CREATE TABLE Employers (
-    employerID INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    industry TEXT,
-    location TEXT,
-    status TEXT DEFAULT 'active'  -- active or inactive
-);
 
 -- Create the Applications table
 CREATE TABLE Applications (
@@ -490,17 +482,6 @@ INSERT INTO Employers (name, industry, location, status) VALUES
 ('Smart Systems Inc.', 'Electronics', 'Austin, TX', 'inactive'),
 ('Global Retailers', 'Retail', 'Dallas, TX', 'active');
 
-INSERT INTO Employers (name, industry, location, status) VALUES
-('Tech Innovations Ltd.', 'Technology', 'San Francisco, CA', 'active'),
-('GreenBuild Corp.', 'Construction', 'Los Angeles, CA', 'active'),
-('DataMinds Analytics', 'Data Science', 'New York, NY', 'active'),
-('HealthPlus Medical', 'Healthcare', 'Chicago, IL', 'inactive'),
-('AutoTech Solutions', 'Automotive', 'Detroit, MI', 'active'),
-('Creative Minds Agency', 'Marketing', 'Miami, FL', 'inactive'),
-('EcoGreen Enterprises', 'Environmental', 'Seattle, WA', 'active'),
-('FinTech Partners', 'Finance', 'Boston, MA', 'active'),
-('Smart Systems Inc.', 'Electronics', 'Austin, TX', 'inactive'),
-('Global Retailers', 'Retail', 'Dallas, TX', 'active');
 
 INSERT INTO Applications (StudentID, JobID, Status, DateApplied, ReviewScore, Feedback) VALUES
 (1, 1, 'Pending', '2024-01-20', NULL, NULL),
