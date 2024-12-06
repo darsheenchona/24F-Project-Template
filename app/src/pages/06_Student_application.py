@@ -6,7 +6,7 @@ def display():
     st.write("Here are your tracked applications:")
 
     # Fetch applications
-    response = requests.get("http://localhost:5000/api/student/applications")
+    response = requests.get("http://localhost:4000/api/student/applications")
     if response.status_code == 200:
         applications = response.json()
         for app in applications:
@@ -28,7 +28,7 @@ def display():
 
 def add_application(job_title, company_name, status):
     payload = {"job_title": job_title, "company_name": company_name, "status": status}
-    response = requests.post("http://localhost:5000/api/student/applications", json=payload)
+    response = requests.post("http://localhost:4000/api/student/applications", json=payload)
     if response.status_code == 201:
         st.success("Application added successfully!")
     else:
@@ -37,14 +37,14 @@ def add_application(job_title, company_name, status):
 def update_application(app_id):
     status = st.selectbox("New Status", ["Pending", "Accepted", "Rejected"])
     payload = {"status": status}
-    response = requests.put(f"http://localhost:5000/api/student/applications/{app_id}", json=payload)
+    response = requests.put(f"http://localhost:4000/api/student/applications/{app_id}", json=payload)
     if response.status_code == 200:
         st.success("Application updated successfully!")
     else:
         st.error("Failed to update application.")
 
 def remove_application(app_id):
-    response = requests.delete(f"http://localhost:5000/api/student/applications/{app_id}")
+    response = requests.delete(f"http://localhost:4000/api/student/applications/{app_id}")
     if response.status_code == 200:
         st.success("Application removed successfully!")
     else:
