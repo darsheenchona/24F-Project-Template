@@ -10,9 +10,12 @@ coop_advisor = Blueprint('coop_advisor', __name__)
 @coop_advisor.route('/coop_advisor/profile', methods=['GET'])
 def get_coop_advisor_profile():
     advisor_id = request.args.get('advisorID')
+    if not advisor_id:
+        return make_response("Advisor ID is required", 400)
+
     query = '''
         SELECT Users.name, Users.email, CoOpAdvisors.department, CoOpAdvisors.advisingHistoryCount
-        FROM CoOpAdvisors
+        FROM CoOpAdvisors 
         JOIN Users ON CoOpAdvisors.userID = Users.userID
         WHERE CoOpAdvisors.advisorID = %s
     '''
@@ -56,6 +59,9 @@ def update_coop_advisor_profile():
 @coop_advisor.route('/Students', methods=['GET'])
 def get_advised_students():
     advisor_id = request.args.get('advisorID')
+    if not advisor_id:
+        return make_response("Advisor ID is required", 400)
+
     query = '''
         SELECT Students.studentID, Users.name AS student_name, Students.major
         FROM Students
@@ -66,7 +72,11 @@ def get_advised_students():
     cursor.execute(query, (advisor_id,))
     students = cursor.fetchall()
 
+    if not students:
+        return make_response("No students found for the specified advisor", 404)
+
     return make_response(jsonify(students), 200)
+
 
 
 # retrieve specific student advised by a co-op advisor
@@ -86,6 +96,7 @@ def get_student_details(student_id):
         return make_response("Student not found", 404)
 
     return make_response(jsonify(student), 200)
+
 
 
 # update student details
@@ -109,7 +120,8 @@ def update_student_details(student_id):
 @coop_advisor.route('/students/<student_id>/placements', methods=['GET'])
 def get_student_placements(student_id):
     query = '''
-        SELECT Placement.placementID, Placement.company, Placement.position, Placement.startDate, Placement.endDate, Placement.status
+        SELECT Placement.placementID, Placement.company, Placement.position, 
+               Placement.startDate, Placement.endDate, Placement.status
         FROM Placement
         WHERE Placement.studentID = %s
     '''
@@ -117,7 +129,11 @@ def get_student_placements(student_id):
     cursor.execute(query, (student_id,))
     placements = cursor.fetchall()
 
+    if not placements:
+        return make_response("No placements found for this student", 404)
+
     return make_response(jsonify(placements), 200)
+
 
 
 # add a new placement for a student
