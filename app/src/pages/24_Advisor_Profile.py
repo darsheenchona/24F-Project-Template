@@ -130,44 +130,39 @@ if placement_StudentID:
     except Exception as e:
         st.error(f"Error: {e}")
 
-# ---------------------------------------------------------
-# Generate New Report
-st.header("Generate Report for Advisor")
-
-if advisor_id:
-    report_title = st.text_input("Report Title:")
-    report_description = st.text_area("Report Description:")
-
-    if st.button("Generate Report"):
-        # Validate that report title and description are provided
-        if report_title and report_description:
-            data = {"title": report_title, "description": report_description}
-            try:
-                response = requests.post(f"{BASE_URL}/coop_advisor/reports?advisorID={advisor_id}", json=data)
-                if response.status_code == 201:
-                    st.success("Report generated successfully!")
-                else:
-                    st.error("Failed to generate report.")
-            except Exception as e:
-                st.error(f"Error: {e}")
-        else:
-            st.warning("Please provide both a title and description for the report.")
+# ---------------------------------------------------------# fetch existing reports
+response = requests.get("http://api:4000/reports")
+if response.status_code == 200:
+    reports = response.json()
 else:
-    st.warning("Please enter an Advisor ID to generate the report.")
+    st.error("Failed to fetch reports.")
+    reports = []
 
-# ---------------------------------------------------------
-# Delete Report
-st.header("Delete Report")
+st.write("### Existing Reports")
+for report in reports:
+    st.write(f"**{report['title']}** - Generated on {report['dateGenerated']}")
+    if st.button(f"Delete {report['title']}", key=f"delete_{report['advisorID']}"):
+        response = requests.delete(f"http://api:4000/reports/{report['advisorID']}")
+        if response.status_code == 200:
+            st.success(f"Deleted {report['title']}")
+        else:
+            st.error("Failed to delete report.")
 
-report_id = st.text_input("Enter Report ID to delete:")
+# generate new report
+recruiter_id = st.session_state.get("advisor_id")
+st.write("### Generate New Report")
+with st.form(key="generate_report_form"):
+    title = st.text_input("Report Title")
+    description = st.text_area("Report Description")
+    submitted = st.form_submit_button("Generate Report")
 
-if report_id:
-    if st.button("Delete Report"):
-        try:
-            response = requests.delete(f"{BASE_URL}/coop_advisor/reports/{report_id}")
-            if response.status_code == 200:
-                st.success(f"Report with ID {report_id} deleted successfully!")
-            else:
-                st.error("Failed to delete report.")
-        except Exception as e:
-            st.error(f"Error: {e}")
+    if submitted:
+        payload = {
+            "title": title,
+            "description": description,
+        }
+        response = requests.post("http://api:4000/reports", json=payload,  params={"advisorID": advisor_id})
+        if response.status_code == 201:
+            st.success("Report generated successfully.")
+        else:
+            st.error("Failed to generate report.")
