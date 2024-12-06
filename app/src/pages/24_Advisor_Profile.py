@@ -90,11 +90,11 @@ else:
 # Retrieve and display student details
 st.header("Student Details")
 
-student_id_input = st.text_input("Enter Student ID for details:")
+StudentID_input = st.text_input("Enter Student ID for details:")
 
-if student_id_input:
+if StudentID_input:
     try:
-        response = requests.get(f"{BASE_URL}/coop_advisor/students/{student_id_input}")
+        response = requests.get(f"{BASE_URL}/coop_advisor/students/{StudentID_input}")
         if response.status_code == 200:
             student = response.json()
             st.subheader("Student Information")
@@ -111,11 +111,11 @@ if student_id_input:
 # Retrieve and display student placement history
 st.header("Student Placement History")
 
-placement_student_id = st.text_input("Enter Student ID to see placement history:")
+placement_StudentID = st.text_input("Enter Student ID to see placement history:")
 
-if placement_student_id:
+if placement_StudentID:
     try:
-        response = requests.get(f"{BASE_URL}/coop_advisor/students/{placement_student_id}/placements")
+        response = requests.get(f"{BASE_URL}/coop_advisor/students/{placement_StudentID}/placements")
         if response.status_code == 200:
             placements = response.json()
             st.subheader("Placement History:")

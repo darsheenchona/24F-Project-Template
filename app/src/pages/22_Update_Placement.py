@@ -15,11 +15,13 @@ st.title("Update Co-op Placement")
 
 def manage_placements():
     # Get student ID from user input
-    student_id = st.text_input("Enter Student ID for Placement Management")
+    StudentID = st.text_input("Enter Student ID for Placement Management")
     
-    if student_id:  # Only fetch placements if student ID is provided
-        if st.button("View Placements", key=f"view_placements_{student_id}"):  # Unique key
-            response = requests.get(f"http://api:4000/coop_advisor/students/{student_id}/placements")
+    if StudentID:  # Only fetch placements if student ID is provided
+        if st.button("View Placements", key=f"view_placements_{StudentID}"):  # Unique key
+            response = requests.get(f"http://api:4000/coop_advisor/students/{StudentID}/placements")
+
+
             
             # Check the status code of the response
             if response.status_code == 200:
@@ -37,21 +39,21 @@ def manage_placements():
         st.error("Please enter a valid Student ID.")
 
     # Add functionality to add a new placement for the student
-    if st.button("Add Placement", key=f"add_placement_{student_id}") and student_id:
-        add_placement(student_id)
-    elif not student_id:
+    if st.button("Add Placement", key=f"add_placement_{StudentID}") and StudentID:
+        add_placement(StudentID)
+    elif not StudentID:
         st.error("Please enter a Student ID before adding a placement.")
 
-def add_placement(student_id):
+def add_placement(StudentID):
     # Get placement details from user input
     company = st.text_input("Enter Company")
     position = st.text_input("Enter Position")
     start_date = st.date_input("Start Date")
     end_date = st.date_input("End Date")
     status = st.selectbox("Status", ["Active", "Completed", "Pending"])
-    
+
     # When the Add Placement button is pressed, send a POST request to add placement
-    if st.button("Add Placement", key=f"submit_add_placement_{student_id}") and company and position:
+    if st.button("Add Placement", key=f"submit_add_placement_{StudentID}") and company and position:
         data = {
             "company": company,
             "position": position,
@@ -60,7 +62,7 @@ def add_placement(student_id):
             "status": status
         }
         
-        response = requests.post(f"http://api:4000/coop_advisor/students/{student_id}/placements", json=data)
+        response = requests.post(f"http://api:4000/coop_advisor/students/{StudentID}/placements", json=data)
         
         if response.status_code == 201:
             st.success("Placement added successfully.")
