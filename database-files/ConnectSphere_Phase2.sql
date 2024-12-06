@@ -236,16 +236,16 @@ CREATE TABLE ITAssets (
     assetName TEXT,
     ITStatus TEXT,
     assetType TEXT,
-    assetDetails TEXT,
-
+    assetDetails TEXT
 );
+
 -- Create the Tickets table 
 CREATE TABLE Tickets (
     TicketID INT AUTO_INCREMENT PRIMARY KEY,
     TicketTime DATETIME DEFAULT CURRENT_TIMESTAMP,
     TicketStatus TEXT,
     TicketDetails TEXT,
-    FufilledBy INT NOT NULL,
+    FufilledBy INT DEFAULT 0,
     FOREIGN KEY (FufilledBy) REFERENCES ITEmployee(ITEmpID) 
 );
 
@@ -887,26 +887,10 @@ INSERT INTO Alumni (Name, GraduationYear, CoOpExperienceDetails, CurrentPosition
 ('Grace Campbell', 2021, 'Research Assistant Intern at NeuroTech Labs', 'Research Scientist', 'NeuroTech Labs', 'https://linkedin.com/in/gracecampbell');
 
 INSERT INTO ITEmployee (Email, EmpFirstName, EmpLastName) VALUES
+('temp@company.com','Temp','Name'),
 ('jdoe@company.com', 'John', 'Doe'),
 ('asmith@company.com', 'Alice', 'Smith'),
-('mbrown@company.com', 'Michael', 'Brown'),
-('cwhite@company.com', 'Catherine', 'White'),
-('tjohnson@company.com', 'Thomas', 'Johnson'),
-('mgreen@company.com', 'Megan', 'Green'),
-('rwilson@company.com', 'Robert', 'Wilson'),
-('lcarter@company.com', 'Linda', 'Carter'),
-('pjames@company.com', 'Paul', 'James'),
-('ahall@company.com', 'Andrew', 'Hall'),
-('hclark@company.com', 'Hannah', 'Clark'),
-('ebranch@company.com', 'Emily', 'Branch'),
-('mmartin@company.com', 'Matthew', 'Martin'),
-('kroberts@company.com', 'Kelly', 'Roberts'),
-('dlee@company.com', 'Daniel', 'Lee'),
-('tadams@company.com', 'Timothy', 'Adams'),
-('jgonzalez@company.com', 'Jessica', 'Gonzalez'),
-('achavez@company.com', 'Aaron', 'Chavez'),
-('cpeterson@company.com', 'Christina', 'Peterson'),
-('nrobinson@company.com', 'Nathan', 'Robinson');
+('mbrown@company.com', 'Michael', 'Brown');
 
 INSERT INTO ITAssets (assetName, ITStatus, assetType, assetDetails)
 VALUES
@@ -935,21 +919,21 @@ VALUES
 INSERT INTO Tickets (TicketStatus, TicketDetails, FufilledBy) VALUES
 ('Open', 'Resolve slow database queries', 1),
 ('In Progress', 'Fix network latency issues', 2),
-('Closed', 'Update endpoint security software', 3),
-('Open', 'Install new patches on servers', 4),
-('Closed', 'Configure new firewall rules', 5),
-('In Progress', 'Replace failed hard drive on database server', 6),
-('Open', 'Investigate high CPU usage on email server', 7),
-('Closed', 'Update antivirus definitions on all endpoints', 8),
-('Open', 'Reboot file server after maintenance', 9),
-('Closed', 'Fix network switch connectivity issues', 10),
-('Open', 'Troubleshoot VPN connection for remote employees', 11),
-('In Progress', 'Analyze traffic for possible DDoS attack', 12),
-('Closed', 'Implement new group policies for user access', 13),
-('Open', 'Replace aging printer hardware', 14),
-('In Progress', 'Test new backup server configuration', 15),
-('Open', 'Deploy patch management software update', 16),
-('Closed', 'Resolve user login issues on CRM software', 17),
-('Open', 'Optimize network performance for cloud storage', 18),
-('In Progress', 'Audit DNS server for configuration errors', 19),
-('Closed', 'Fix broken patch panel in server room', 20);
+('Closed', 'Update endpoint security software', 4),
+('Open', 'Install new patches on servers', 1),
+('Closed', 'Configure new firewall rules', 2),
+('In Progress', 'Replace failed hard drive on database server', 4),
+('Open', 'Investigate high CPU usage on email server', 1),
+('Closed', 'Update antivirus definitions on all endpoints', 3),
+('Open', 'Reboot file server after maintenance', 1),
+('Closed', 'Fix network switch connectivity issues', 2),
+('Open', 'Troubleshoot VPN connection for remote employees', 1),
+('In Progress', 'Analyze traffic for possible DDoS attack', 2),
+('Closed', 'Implement new group policies for user access', 4),
+('Open', 'Replace aging printer hardware', 1),
+('In Progress', 'Test new backup server configuration', 2),
+('Open', 'Deploy patch management software update', 1),
+('Closed', 'Resolve user login issues on CRM software', 4),
+('Open', 'Optimize network performance for cloud storage', 1),
+('In Progress', 'Audit DNS server for configuration errors', 3),
+('Closed', 'Fix broken patch panel in server room', 2);

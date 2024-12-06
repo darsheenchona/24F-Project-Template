@@ -19,8 +19,8 @@ def get_tickets():
 def create_ticket():
     data = request.json
     query = f"""
-        INSERT INTO Tickets (TicketStatus, TicketDetails, FufilledBy)
-        VALUES ('{data['TicketStatus']}', '{data['TicketDetails']}', {data['FufilledBy']})
+        INSERT INTO Tickets (TicketStatus, TicketDetails)
+        VALUES ('{data['TicketStatus']}', '{data['TicketDetails']}')
     """
     cursor = db.get_db().cursor()
     cursor.execute(query)
