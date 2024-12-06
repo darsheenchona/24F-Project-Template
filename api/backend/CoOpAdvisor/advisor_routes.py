@@ -238,15 +238,9 @@ def get_reports():
 def generate_report():
     data = request.json
     advisor_id = request.args.get('advisorID')
-
-    # Check if advisor_id is provided
-    if not advisor_id:
-        return make_response("Advisor ID is required", 400)
-
-    # Use direct string formatting instead of %s
     query = f'''
-        INSERT INTO Reports (Title, Description, DateGenerated, GeneratedBy)
-        VALUES ("{data['Title']}", "{data['description']}", NOW(), {advisor_id})
+        INSERT INTO Reports (title, description, dateGenerated, GeneratedBy)
+        VALUES ('{data["title"]}', '{data["description"]}', NOW(), '{advisor_id}')
     '''
     cursor = db.get_db().cursor()
     cursor.execute(query)
