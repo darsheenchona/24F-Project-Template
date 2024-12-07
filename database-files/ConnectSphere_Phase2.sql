@@ -63,7 +63,13 @@ CREATE TABLE Placement (
     FOREIGN KEY (StudentID) REFERENCES Students(StudentID) ON DELETE CASCADE
 );
 
-
+CREATE TABLE Employers (
+    EmployerID INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    industry VARCHAR(255) NOT NULL,
+    location VARCHAR(255) NOT NULL,
+    status VARCHAR(50) NOT NULL
+);
 
 -- Create the Students table
 CREATE TABLE Students (
@@ -78,6 +84,17 @@ CREATE TABLE Students (
     PortfolioLink VARCHAR(255),
     FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
 );
+
+CREATE TABLE Placement (
+    PlacementID INT AUTO_INCREMENT PRIMARY KEY,
+    StudentID INT NOT NULL,
+    company VARCHAR(255) NOT NULL,
+    position VARCHAR(255) NOT NULL,
+    startDate DATE NOT NULL,
+    endDate DATE NOT NULL,
+    status VARCHAR(50) NOT NULL
+);
+
 
 -- Create the Recruiters table
 CREATE TABLE Recruiters (
@@ -166,7 +183,7 @@ CREATE TABLE Events (
     FOREIGN KEY (StudentID) REFERENCES Students(StudentID) ON DELETE CASCADE
 );
 
--- Create the Notifications table
+-- Create the Notifications tablex
 CREATE TABLE Notifications (
     NotificationID INT AUTO_INCREMENT PRIMARY KEY,
     UserID INT NOT NULL,
