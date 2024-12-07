@@ -9,7 +9,7 @@ Create a .env in the api folder to connect to MySql database.
 
 Run docker compose up -d to start all services. 
 
-more documentation and set up can be found here: https://github.com/NEU-CS3200/24F-Project-Template
+Documentation and set up templates can be found here: https://github.com/NEU-CS3200/24F-Project-Template
 
 ## Video Link
 This is the video link that explains our repo and project. Please watch the video to fully understand our project. 
