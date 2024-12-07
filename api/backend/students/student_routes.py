@@ -33,16 +33,23 @@ def get_student_profile(studentID):
 @student_bp.route('/student/applications', methods=['GET'])
 def get_applications():
     student_id = request.args.get('studentID')
+    if not student_id or not student_id.isdigit():
+        return make_response("Invalid or missing studentID parameter", 400)
+
     query = f'''
-    SELECT A.ApplicationID,
-           J.Title AS jobTitle,
-           J.Company AS companyName,
-           A.Status,
-           J.Deadline
-    FROM Applications A
-    JOIN Jobs J ON A.JobID = J.JobID
-    WHERE A.StudentID = {student_id}
-'''
+        SELECT A.ApplicationID,
+               J.Title AS jobTitle,
+               J.Company AS companyName,
+               A.Status,
+               A.DateApplied,
+               A.ReviewScore,
+               A.Feedback,
+               J.Deadline,
+               J.JobID
+        FROM Applications A
+        JOIN Jobs J ON A.JobID = J.JobID
+        WHERE A.StudentID = {student_id}
+    '''
 
     cursor = db.get_db().cursor()
     cursor.execute(query)
@@ -55,9 +62,14 @@ def get_applications():
 @student_bp.route('/student/applications', methods=['POST'])
 def add_application():
     data = request.json
+    required_fields = ["StudentID", "JobID", "Status", "DateApplied", "ReviewScore", "Feedback"]
+    for field in required_fields:
+        if field not in data:
+            return make_response(f"Missing field: {field}", 400)
+
     query = f'''
-        INSERT INTO Applications (studentID, jobTitle, companyName, status, deadline)
-        VALUES ({data["studentID"]}, '{data["jobTitle"]}', '{data["companyName"]}', '{data["status"]}', '{data["deadline"]}')
+        INSERT INTO Applications (StudentID, JobID, Status, DateApplied, ReviewScore, Feedback)
+        VALUES ({data["StudentID"]}, {data["JobID"]}, '{data["Status"]}', '{data["DateApplied"]}', {data["ReviewScore"]}, '{data["Feedback"]}')
     '''
     cursor = db.get_db().cursor()
     cursor.execute(query)
@@ -70,10 +82,25 @@ def add_application():
 @student_bp.route('/student/applications/<application_id>', methods=['PUT'])
 def update_application(application_id):
     data = request.json
+
+    set_clauses = []
+    if "Status" in data:
+        set_clauses.append(f"Status = '{data['Status']}'")
+    if "DateApplied" in data:
+        set_clauses.append(f"DateApplied = '{data['DateApplied']}'")
+    if "ReviewScore" in data:
+        set_clauses.append(f"ReviewScore = {data['ReviewScore']}")
+    if "Feedback" in data:
+        set_clauses.append(f"Feedback = '{data['Feedback']}'")
+
+    if not set_clauses:
+        return make_response("No fields to update", 400)
+
+    set_clause = ", ".join(set_clauses)
     query = f'''
         UPDATE Applications
-        SET status = '{data["status"]}', jobTitle = '{data["jobTitle"]}'
-        WHERE applicationID = {application_id}
+        SET {set_clause}
+        WHERE ApplicationID = {application_id}
     '''
     cursor = db.get_db().cursor()
     cursor.execute(query)
@@ -86,13 +113,40 @@ def update_application(application_id):
 @student_bp.route('/student/applications/<application_id>', methods=['DELETE'])
 def delete_application(application_id):
     query = f'''
-        DELETE FROM Applications WHERE applicationID = {application_id}
+        DELETE FROM Applications WHERE ApplicationID = {application_id}
     '''
     cursor = db.get_db().cursor()
     cursor.execute(query)
     db.get_db().commit()
 
     return make_response("Application removed successfully", 200)
+
+
+# ------------------------------------------------------------
+# Corrected get_job endpoint
+@student_bp.route('/jobs/<job_id>', methods=['GET'])
+def get_job(job_id):
+    if not job_id:
+        return make_response("Missing job parameter", 400)
+
+    query = f'''
+        SELECT title AS Title,
+               company AS Company,
+               deadline AS Deadline,
+               description AS Description,
+               requirements AS Requirements,
+               status AS Status
+        FROM Jobs
+        WHERE jobID = {job_id}
+    '''
+    cursor = db.get_db().cursor()
+    cursor.execute(query)
+    job = cursor.fetchone()
+
+    if not job:
+        return make_response("Job not found", 404)
+
+    return make_response(jsonify(job), 200)
 
 
 # ------------------------------------------------------------
@@ -112,16 +166,7 @@ def get_saved_jobs():
     cursor.execute(query)
     rows = cursor.fetchall()
 
-    saved_jobs_list = []
-    for (SaveID, Title, Company, SaveDate) in rows:
-        saved_jobs_list.append({
-            "id": SaveID,
-            "job_title": Title,
-            "company_name": Company,
-            "save_date": SaveDate if SaveDate else None  # Just return the string directly
-        })
-
-    return make_response(jsonify(saved_jobs_list), 200)
+    return make_response(jsonify(rows), 200)
 
 
 @student_bp.route('/student/savedjobs', methods=['POST'])
@@ -143,12 +188,8 @@ def add_saved_job():
     return make_response("Saved job added successfully", 201)
 
 
-
 @student_bp.route('/student/savedjobs/<save_id>', methods=['DELETE'])
 def delete_saved_job(save_id):
-    if not save_id.isdigit():
-        return make_response("Invalid save_id", 400)
-
     query = f'''
         DELETE FROM SavedJobs WHERE SaveID = {save_id}
     '''
@@ -161,12 +202,22 @@ def delete_saved_job(save_id):
 
 # ------------------------------------------------------------
 # Fetch recommendations
-@student_bp.route('/recommendations', methods=['GET'])
+@student_bp.route('/student/recommendations', methods=['GET'])
 def get_recommendations():
     student_id = request.args.get('studentID')
+
+    # Validate the input
+    if not student_id or not student_id.isdigit():
+        return make_response(jsonify({"error": "Invalid or missing studentID parameter"}), 400)
+
+    # Query to fetch recommendations
     query = f'''
-        SELECT recommendationID, jobTitle, companyName, matchScore
-        FROM Recommendations
+        SELECT recommendationID AS recommendation_id,
+               PositionTitle AS job_title,
+               Company AS company_name,
+               matchScore AS match_score
+        FROM RecommendedJobs
+        JOIN Jobs ON Jobs.JobID = RecommendedJobs.JobID
         WHERE studentID = {student_id}
     '''
     cursor = db.get_db().cursor()
@@ -181,10 +232,18 @@ def get_recommendations():
 @student_bp.route('/advisor-meetings', methods=['GET'])
 def get_advisor_meetings():
     student_id = request.args.get('studentID')
+    if not student_id or not student_id.isdigit():
+        return make_response(jsonify({"error": "Invalid or missing studentID parameter"}), 400)
+
     query = f'''
-        SELECT meetingID, advisorName, meetingDate, meetingTime, purpose, notes
+        SELECT 
+            MeetingID AS meeting_id,
+            AdvisorID AS advisor_id,
+            MeetingDateTime AS meeting_date_time,
+            Purpose AS purpose,
+            Notes AS notes
         FROM AdvisorMeetings
-        WHERE studentID = {student_id}
+        WHERE StudentID = {student_id}
     '''
     cursor = db.get_db().cursor()
     cursor.execute(query)
@@ -197,9 +256,15 @@ def get_advisor_meetings():
 @student_bp.route('/advisor-meetings', methods=['POST'])
 def schedule_meeting():
     data = request.json
+    required_fields = ["StudentID", "AdvisorID", "MeetingDateTime", "Purpose"]
+    for field in required_fields:
+        if field not in data or not data[field]:
+            return make_response(jsonify({"error": f"Missing or invalid field: {field}"}), 400)
+
     query = f'''
-        INSERT INTO AdvisorMeetings (studentID, advisorName, meetingDate, meetingTime, purpose, notes)
-        VALUES ({data["studentID"]}, '{data["advisorName"]}', '{data["meetingDate"]}', '{data["meetingTime"]}', '{data["purpose"]}', '{data["notes"]}')
+        INSERT INTO AdvisorMeetings (StudentID, AdvisorID, MeetingDateTime, Purpose, Notes)
+        VALUES ({data["StudentID"]}, {data["AdvisorID"]}, '{data["MeetingDateTime"]}', 
+                '{data["Purpose"]}', '{data.get("Notes", "")}')
     '''
     cursor = db.get_db().cursor()
     cursor.execute(query)
@@ -212,10 +277,22 @@ def schedule_meeting():
 @student_bp.route('/advisor-meetings/<meeting_id>', methods=['PUT'])
 def update_meeting(meeting_id):
     data = request.json
+    set_clauses = []
+    if "meetingDateTime" in data:
+        set_clauses.append(f"MeetingDateTime = '{data['meetingDateTime']}'")
+    if "purpose" in data:
+        set_clauses.append(f"Purpose = '{data['purpose']}'")
+    if "notes" in data:
+        set_clauses.append(f"Notes = '{data['notes']}'")
+
+    if not set_clauses:
+        return make_response(jsonify({"error": "No valid fields provided for update"}), 400)
+
+    set_clause = ", ".join(set_clauses)
     query = f'''
         UPDATE AdvisorMeetings
-        SET purpose = '{data["purpose"]}', notes = '{data["notes"]}'
-        WHERE meetingID = {meeting_id}
+        SET {set_clause}
+        WHERE MeetingID = {meeting_id}
     '''
     cursor = db.get_db().cursor()
     cursor.execute(query)

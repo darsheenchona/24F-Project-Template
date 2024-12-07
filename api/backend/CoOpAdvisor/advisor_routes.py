@@ -414,16 +414,7 @@ def get_student_progress(student_id):
     if not student_data:
         return make_response("Student not found", 404)
 
-    student_profile = {
-        "major": student_data[0] or "N/A",  # If no data, return "N/A"
-        "skills": student_data[1] or "No skills listed",  # If no skills, return default message
-        "interests": student_data[2] or "No interests listed",  # If no interests, return default message
-        "dashboard_preferences": student_data[3] or "No preferences set",  # If no preferences, return default message
-        "resume_link": student_data[4] or "No resume link provided",  # If no resume, return default message
-        "portfolio_link": student_data[5] or "No portfolio link provided"  # If no portfolio, return default message
-    }
-
-    return make_response(jsonify(student_profile), 200)
+    return make_response(jsonify(student_data), 200)
 
 
 # ------------------------------------------------------------
@@ -433,18 +424,13 @@ def update_student_progress(student_id):
     # Get the new data from the request
     data = request.json
 
-    # Collect updated values from the request (skills, interests, etc.)
-    skills = data.get("skills")
-    interests = data.get("interests")
-    dashboard_preferences = data.get("dashboard_preferences")
-    resume_link = data.get("resume_link")
-    portfolio_link = data.get("portfolio_link")
+
 
     # Query to update student profile data using direct string interpolation
     query = f'''
         UPDATE Students
-        SET Skills = '{skills}', Interests = '{interests}', DashboardPreferences = '{dashboard_preferences}',
-            ResumeLink = '{resume_link}', PortfolioLink = '{portfolio_link}'
+        SET Skills = '{data['Skills']}', Interests = '{data['Interests']}', DashboardPreferences = '{data['DashboardPreferences']}',
+            ResumeLink = '{data['ResumeLink']}', PortfolioLink = '{data['PortfolioLink']}'
         WHERE StudentID = {student_id}
     '''  # Use direct string interpolation for fields and student_id
     

@@ -30,46 +30,46 @@ if student_id:
 
             # Display student profile details
             st.subheader("Major:")
-            st.write(student_data.get("major", "N/A"))
+            st.write(student_data.get("Major", "N/A"))
 
             # Display skills
             st.subheader("Skills:")
-            st.write(student_data.get("skills", "No skills listed"))
+            st.write(student_data.get("Skills", "No skills listed"))
 
             # Display interests
             st.subheader("Interests:")
-            st.write(student_data.get("interests", "No interests listed"))
+            st.write(student_data.get("Interests", "No interests listed"))
             
             # Display dashboard preferences
             st.subheader("Dashboard Preferences:")
-            st.write(student_data.get("dashboard_preferences", "No preferences set"))
+            st.write(student_data.get("DashboardPreferences", "No preferences set"))
             
             # Display resume link
             st.subheader("Resume Link:")
-            st.write(student_data.get("resume_link", "No resume link provided"))
+            st.write(student_data.get("ResumeLink", "No resume link provided"))
 
             # Display portfolio link
             st.subheader("Portfolio Link:")
-            st.write(student_data.get("portfolio_link", "No portfolio link provided"))
+            st.write(student_data.get("PortfolioLink", "No portfolio link provided"))
             
             # Update student progress
             st.header("Update Progress or Profile")
 
             # Display current student data in editable form
-            new_skills = st.text_area("Update Skills", student_data.get("skills", ""))
-            new_interests = st.text_area("Update Interests", student_data.get("interests", ""))
-            new_dashboard_preferences = st.text_area("Update Dashboard Preferences", student_data.get("dashboard_preferences", ""))
-            new_resume_link = st.text_input("Update Resume Link", student_data.get("resume_link", ""))
-            new_portfolio_link = st.text_input("Update Portfolio Link", student_data.get("portfolio_link", ""))
+            new_skills = st.text_area("Update Skills", student_data.get("Skills", ""))
+            new_interests = st.text_area("Update Interests", student_data.get("Interests", ""))
+            new_dashboard_preferences = st.text_area("Update Dashboard Preferences", student_data.get("DashboardPreferences", ""))
+            new_resume_link = st.text_input("Update Resume Link", student_data.get("ResumeLink", ""))
+            new_portfolio_link = st.text_input("Update Portfolio Link", student_data.get("PortfolioLink", ""))
 
             if st.button("Save Updates", key=f"save_progress_{student_id_int}"):
                 # Send an update request (PUT) to the API
                 update_data = {
-                    "skills": new_skills,
-                    "interests": new_interests,
-                    "dashboard_preferences": new_dashboard_preferences,
-                    "resume_link": new_resume_link,
-                    "portfolio_link": new_portfolio_link
+                    "Skills": new_skills,
+                    "Interests": new_interests,
+                    "DashboardPreferences": new_dashboard_preferences,
+                    "ResumeLink": new_resume_link,
+                    "PortfolioLink": new_portfolio_link
                 }
                 
                 update_response = requests.put(f'http://api:4000/student_progress/{student_id_int}', json=update_data)

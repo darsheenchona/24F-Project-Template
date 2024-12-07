@@ -23,10 +23,10 @@ def display():
                 # For example: app['ApplicationID'], app['JobID'], app['Status'], app['DateApplied'], etc.
                 
                 st.subheader(f"Application ID: {app['ApplicationID']}")
-                st.write(f"**Status:** {app.get('Status', 'N/A')}")
-                st.write(f"**Date Applied:** {app.get('DateApplied', 'N/A')}")
-                st.write(f"**Review Score:** {app.get('ReviewScore', 'N/A')}")
-                st.write(f"**Feedback:** {app.get('Feedback', 'N/A')}")
+                st.write(f"**Status:** {app['Status']}")
+                st.write(f"**Date Applied:** {app['DateApplied']}")
+                st.write(f"**Review Score:** {app['ReviewScore']}")
+                st.write(f"**Feedback:** {app['Feedback']}")
 
                 # If you want job details, you must do another request:
                 job_id = app.get('JobID')

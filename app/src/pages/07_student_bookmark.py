@@ -20,12 +20,12 @@ def display():
         saved_jobs = response.json()
         if saved_jobs:
             for i, job in enumerate(saved_jobs):
-                st.subheader(f"{job['job_title']} at {job['company_name']}")
-                st.write(f"Saved on: {job.get('save_date', 'N/A')}")
+                st.subheader(f"{job['Title']} at {job['Company']}")
+                st.write(f"Saved on: {job.get('SaveDate', 'N/A')}")
 
                 # Use a unique key by including the index 'i'
-                if st.button("Remove Saved Job", key=f"remove_{job['id']}_{i}"):
-                    remove_saved_job(job['id'])
+                if st.button("Remove Saved Job", key=f"remove_{job['SaveID']}_{i}"):
+                    remove_saved_job(job['SaveID'])
 
         else:
             st.info("No saved jobs found for this student.")
@@ -55,7 +55,6 @@ def add_saved_job(student_id, job_id, save_date):
     response = requests.post("http://api:4000/student/savedjobs", json=payload)
     if response.status_code == 201:
         st.success("Saved job added successfully!")
-        st.experimental_rerun()  # Refresh the page to show updated list
     else:
         st.error("Failed to add saved job.")
 
@@ -64,7 +63,6 @@ def remove_saved_job(save_id):
     response = requests.delete(f"http://api:4000/student/savedjobs/{save_id}")
     if response.status_code == 200:
         st.success("Saved job removed successfully!")
-        st.experimental_rerun()
     else:
         st.error("Failed to remove saved job.")
 
