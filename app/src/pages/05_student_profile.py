@@ -22,12 +22,12 @@ def display():
             profile = response.json()
             if profile:
                 st.subheader("Profile Details")
-                st.write(f"**Name:** {profile.get('name', 'N/A')}")
-                st.write(f"**Email:** {profile.get('email', 'N/A')}")
-                st.write(f"**Major:** {profile.get('major', 'N/A')}")
-                st.write(f"**Year:** {profile.get('year', 'N/A')}")
-                st.write(f"**Skills:** {profile.get('skills', 'N/A')}")
-                st.write(f"**Interests:** {profile.get('interests', 'N/A')}")
+                st.write(f"**Name:** {profile.get('Name', 'N/A')}")
+                st.write(f"**Email:** {profile.get('Email', 'N/A')}")
+                st.write(f"**Major:** {profile.get('Major', 'N/A')}")
+                st.write(f"**Year:** {profile.get('Year', 'N/A')}")
+                st.write(f"**Skills:** {profile.get('Skills', 'N/A')}")
+                st.write(f"**Interests:** {profile.get('Interests', 'N/A')}")
             else:
                 st.warning("No profile data found for the provided Student ID.")
         else:
