@@ -30,14 +30,20 @@ def get_student_profile(studentID):
 
 # ------------------------------------------------------------
 # Retrieve applications
-@student_bp.route('/applications', methods=['GET'])
+@student_bp.route('/student/applications', methods=['GET'])
 def get_applications():
     student_id = request.args.get('studentID')
     query = f'''
-        SELECT applicationID, jobTitle, companyName, status, deadline
-        FROM Applications
-        WHERE studentID = {student_id}
-    '''
+    SELECT A.ApplicationID,
+           J.Title AS jobTitle,
+           J.Company AS companyName,
+           A.Status,
+           J.Deadline
+    FROM Applications A
+    JOIN Jobs J ON A.JobID = J.JobID
+    WHERE A.StudentID = {student_id}
+'''
+
     cursor = db.get_db().cursor()
     cursor.execute(query)
     applications = cursor.fetchall()
@@ -46,7 +52,7 @@ def get_applications():
 
 
 # Add a new application
-@student_bp.route('/applications', methods=['POST'])
+@student_bp.route('/student/applications', methods=['POST'])
 def add_application():
     data = request.json
     query = f'''
@@ -61,7 +67,7 @@ def add_application():
 
 
 # Update an application
-@student_bp.route('/applications/<application_id>', methods=['PUT'])
+@student_bp.route('/student/applications/<application_id>', methods=['PUT'])
 def update_application(application_id):
     data = request.json
     query = f'''
@@ -77,7 +83,7 @@ def update_application(application_id):
 
 
 # Remove an application
-@student_bp.route('/applications/<application_id>', methods=['DELETE'])
+@student_bp.route('/student/applications/<application_id>', methods=['DELETE'])
 def delete_application(application_id):
     query = f'''
         DELETE FROM Applications WHERE applicationID = {application_id}
@@ -90,48 +96,67 @@ def delete_application(application_id):
 
 
 # ------------------------------------------------------------
-# Retrieve bookmarks
-@student_bp.route('/bookmarks', methods=['GET'])
-def get_bookmarks():
+@student_bp.route('/student/savedjobs', methods=['GET'])
+def get_saved_jobs():
     student_id = request.args.get('studentID')
+    if not student_id or not student_id.isdigit():
+        return make_response("Invalid or missing studentID parameter", 400)
+
     query = f'''
-        SELECT bookmarkID, jobTitle, companyName
-        FROM Bookmarks
-        WHERE studentID = {student_id}
+        SELECT S.SaveID, J.Title, J.Company, S.SaveDate
+        FROM SavedJobs S
+        JOIN Jobs J ON S.JobID = J.JobID
+        WHERE S.StudentID = {student_id}
     '''
     cursor = db.get_db().cursor()
     cursor.execute(query)
-    bookmarks = cursor.fetchall()
+    rows = cursor.fetchall()
 
-    return make_response(jsonify(bookmarks), 200)
+    saved_jobs_list = []
+    for (SaveID, Title, Company, SaveDate) in rows:
+        saved_jobs_list.append({
+            "id": SaveID,
+            "job_title": Title,
+            "company_name": Company,
+            "save_date": SaveDate if SaveDate else None  # Just return the string directly
+        })
+
+    return make_response(jsonify(saved_jobs_list), 200)
 
 
-# Add a new bookmark
-@student_bp.route('/bookmarks', methods=['POST'])
-def add_bookmark():
+@student_bp.route('/student/savedjobs', methods=['POST'])
+def add_saved_job():
     data = request.json
+    required_fields = ["StudentID", "JobID", "SaveDate"]
+    for field in required_fields:
+        if field not in data:
+            return make_response(f"Missing field: {field}", 400)
+
     query = f'''
-        INSERT INTO Bookmarks (studentID, jobTitle, companyName)
-        VALUES ({data["studentID"]}, '{data["jobTitle"]}', '{data["companyName"]}')
+        INSERT INTO SavedJobs (StudentID, JobID, SaveDate)
+        VALUES ({data["StudentID"]}, {data["JobID"]}, '{data["SaveDate"]}')
     '''
     cursor = db.get_db().cursor()
     cursor.execute(query)
     db.get_db().commit()
 
-    return make_response("Bookmark added successfully", 201)
+    return make_response("Saved job added successfully", 201)
 
 
-# Remove a bookmark
-@student_bp.route('/bookmarks/<bookmark_id>', methods=['DELETE'])
-def delete_bookmark(bookmark_id):
+
+@student_bp.route('/student/savedjobs/<save_id>', methods=['DELETE'])
+def delete_saved_job(save_id):
+    if not save_id.isdigit():
+        return make_response("Invalid save_id", 400)
+
     query = f'''
-        DELETE FROM Bookmarks WHERE bookmarkID = {bookmark_id}
+        DELETE FROM SavedJobs WHERE SaveID = {save_id}
     '''
     cursor = db.get_db().cursor()
     cursor.execute(query)
     db.get_db().commit()
 
-    return make_response("Bookmark removed successfully", 200)
+    return make_response("Saved job removed successfully", 200)
 
 
 # ------------------------------------------------------------

@@ -20,7 +20,7 @@ if st.button('Applications',
              use_container_width=True):
   st.switch_page('pages/06_Student_application.py')
 
-if st.button('Bookmarks', 
+if st.button('Saved Jobs', 
              type='primary',
              use_container_width=True):
   st.switch_page('pages/07_student_bookmark.py')
