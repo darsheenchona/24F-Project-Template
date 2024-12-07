@@ -1,6 +1,7 @@
 from flask import Flask
 
 from backend.db_connection import db
+from backend.CoopAdvisor.advisor_routes import coop_advisor
 from backend.simple.simple_routes import simple_routes
 from backend.recruiter.recruiter import recruiter
 from backend.ITServiceHead.it_routes import it
@@ -42,6 +43,7 @@ def create_app():
     app.logger.info('current_app(): registering blueprints with Flask app object.')   
     app.register_blueprint(simple_routes)
     app.register_blueprint(recruiter)
+    app.register_blueprint(coop_advisor)
     app.register_blueprint(it)
     app.register_blueprint(student_bp)
 

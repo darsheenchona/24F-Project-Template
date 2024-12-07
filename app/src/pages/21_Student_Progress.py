@@ -2,6 +2,7 @@ import logging
 import streamlit as st
 import requests
 
+# Configure logging
 logger = logging.getLogger(__name__)
 
 st.set_page_config(layout='wide')
@@ -15,44 +16,78 @@ st.title("View Student Progress")
 # Input student ID to fetch their progress
 student_id = st.text_input("Enter Student ID to View Progress")
 
-# Retrieve student profile and progress via the API (GET request)
-response = requests.get('http://api:4000/Student_Progress')  # API URL for student profile
-
-
-# Proceed only if a valid student ID is entered
+# Validate if the entered student_id is a valid integer
 if student_id:
-    # Retrieve student profile and progress via the API (GET request)
-    response = requests.get(f'http://api:4000/Student_Progress/{student_id}')  # API URL for student profile
+    try:
+        # Ensure the input is a valid integer
+        student_id_int = int(student_id)
 
-    if response.status_code == 200:
-        student_data = response.json()
-
-        # Display career interests
-        st.subheader("Career Interests:")
-        st.write(student_data.get("career_interests", "N/A"))
-
-        # Display skills
-        st.subheader("Skills:")
-        st.write(student_data.get("skills", []))
-
-        # Display progress
-        st.subheader("Progress:")
-        st.write(student_data.get("progress", "No progress data available"))
+        # Fetch student profile via the API (GET request)
+        response = requests.get(f'http://api:4000/student_progress/{student_id_int}')
         
-        # Adding functionality for updating progress
-        if st.button("Update Progress", key=f"update_progress_{student_id}"):
-            # For simplicity, let’s assume we just allow updating the progress status here
-            new_progress = st.text_area("Enter New Progress Status", "Progress details...")
-            if st.button("Save Progress", key=f"save_progress_{student_id}"):
-                # Send an update request (POST or PUT) to the API
-                update_data = {"progress": new_progress}
-                update_response = requests.put(f'http://api:4000/Student_Progress/{student_id}', json=update_data)
+        if response.status_code == 200:
+            student_data = response.json()
+
+            # Display student profile details
+            st.subheader("Major:")
+            st.write(student_data.get("major", "N/A"))
+
+            # Display skills
+            st.subheader("Skills:")
+            st.write(student_data.get("skills", "No skills listed"))
+
+            # Display interests
+            st.subheader("Interests:")
+            st.write(student_data.get("interests", "No interests listed"))
+            
+            # Display dashboard preferences
+            st.subheader("Dashboard Preferences:")
+            st.write(student_data.get("dashboard_preferences", "No preferences set"))
+            
+            # Display resume link
+            st.subheader("Resume Link:")
+            st.write(student_data.get("resume_link", "No resume link provided"))
+
+            # Display portfolio link
+            st.subheader("Portfolio Link:")
+            st.write(student_data.get("portfolio_link", "No portfolio link provided"))
+            
+            # Update student progress
+            st.header("Update Progress or Profile")
+
+            # Display current student data in editable form
+            new_skills = st.text_area("Update Skills", student_data.get("skills", ""))
+            new_interests = st.text_area("Update Interests", student_data.get("interests", ""))
+            new_dashboard_preferences = st.text_area("Update Dashboard Preferences", student_data.get("dashboard_preferences", ""))
+            new_resume_link = st.text_input("Update Resume Link", student_data.get("resume_link", ""))
+            new_portfolio_link = st.text_input("Update Portfolio Link", student_data.get("portfolio_link", ""))
+
+            if st.button("Save Updates", key=f"save_progress_{student_id_int}"):
+                # Send an update request (PUT) to the API
+                update_data = {
+                    "skills": new_skills,
+                    "interests": new_interests,
+                    "dashboard_preferences": new_dashboard_preferences,
+                    "resume_link": new_resume_link,
+                    "portfolio_link": new_portfolio_link
+                }
+                
+                update_response = requests.put(f'http://api:4000/student_progress/{student_id_int}', json=update_data)
 
                 if update_response.status_code == 200:
-                    st.success("Progress updated successfully.")
+                    st.success("Profile updated successfully.")
                 else:
-                    st.error(f"Error updating progress: {update_response.status_code}")
-    else:
-        st.error("Error fetching student progress data.")
+                    st.error(f"Error updating profile: {update_response.status_code}")
+        
+        elif response.status_code == 404:
+            st.error("Student not found. Please check the Student ID and try again.")
+        else:
+            st.error(f"Error fetching student progress: {response.status_code}")
+    
+    except ValueError:
+        st.error("Please enter a valid Student ID (numeric value).")
+    
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
 else:
     st.warning("Please enter a valid Student ID.")

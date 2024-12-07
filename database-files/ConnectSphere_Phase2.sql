@@ -13,7 +13,9 @@ DROP TABLE IF EXISTS AdvisorMeetings;
 DROP TABLE IF EXISTS RecommendedJobs;
 DROP TABLE IF EXISTS SavedJobs;
 DROP TABLE IF EXISTS Applications;
+DROP TABLE IF EXISTS Placement;
 DROP TABLE IF EXISTS Jobs;
+DROP TABLE IF EXISTS Employers
 DROP TABLE IF EXISTS CoOpAdvisors;
 DROP TABLE IF EXISTS Alumni;
 DROP TABLE IF EXISTS Recruiters;
@@ -47,6 +49,17 @@ CREATE TABLE CoOpAdvisors (
     FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
 );
 
+-- Create the Placement table
+CREATE TABLE Placement (
+    placementID INT AUTO_INCREMENT PRIMARY KEY,
+    StudentID INT NOT NULL,
+    company VARCHAR(100) NOT NULL,
+    position VARCHAR(100) NOT NULL,
+    startDate DATE NOT NULL,
+    endDate DATE NOT NULL,
+    status ENUM('Active', 'Completed', 'Pending') NOT NULL,
+    FOREIGN KEY (StudentID) REFERENCES Students(StudentID) ON DELETE CASCADE
+);
 
 
 -- Create the Students table
@@ -89,6 +102,14 @@ CREATE TABLE Jobs (
     SalaryRange VARCHAR(50),
     Progress INT DEFAULT 0,
     FOREIGN KEY (PostedBy) REFERENCES Recruiters(RecruiterID) ON DELETE CASCADE
+);
+
+CREATE TABLE Employers (
+    employerID INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    industry TEXT,
+    location TEXT,
+    status TEXT DEFAULT 'active'  -- active or inactive
 );
 
 -- Create the Applications table
@@ -285,6 +306,8 @@ INSERT INTO Users (Name, Email, Role, Password) VALUES
 ('Lucas Bell', 'lucas.bell@advisors.com', 'Advisor', 'LucasAdvises#2024');
 
 
+
+
 INSERT INTO CoOpAdvisors (UserID, Department, MeetingAvailability, ActiveStudentCount) VALUES
 (1, 'Computer Science', 'Monday, Wednesday', 25),
 (2, 'Electrical Engineering', 'Tuesday, Friday', 20),
@@ -343,8 +366,6 @@ INSERT INTO Users (Name, Email, Role, Password) VALUES
 ('Yomayra', 'yomayra@example.com', 'Recruiter', 'password123');
 
 
-
-
 INSERT INTO Students (UserID, Major, Year, Skills, Interests, DashboardPreferences, ResumeLink, PortfolioLink) VALUES
 (1, 'Computer Science', 4, 'Java, Python, C++', 'AI, Robotics', 'Compact', 'https://resume.example.com/student1', 'https://portfolio.example.com/student1'),
 (2, 'Mechanical Engineering', 3, 'SolidWorks, MATLAB, AutoCAD', 'Automotive Design, CAD', 'Detailed', 'https://resume.example.com/student2', 'https://portfolio.example.com/student2'),
@@ -367,6 +388,11 @@ INSERT INTO Students (UserID, Major, Year, Skills, Interests, DashboardPreferenc
 (34, 'Computer Science', 4, 'React, Node.js, SQL', 'Web Development, Databases', 'Detailed', 'https://resume.example.com/student24', 'https://portfolio.example.com/student24'),
 (35, 'Software Engineering', 3, 'Full Stack Development, Agile', 'Cloud Computing, AI', 'Compact', 'https://resume.example.com/student25', 'https://portfolio.example.com/student25'),
 (36, 'Data Science', 4, 'Python, R, Machine Learning', 'Big Data, Analytics', 'Detailed', 'https://resume.example.com/student26', 'https://portfolio.example.com/student26');
+
+INSERT INTO Placement (StudentID, company, position, startDate, endDate, status) VALUES
+(1, 'Google', 'Software Engineer', '2023-06-01', '2023-12-01', 'Active'),
+(1, 'Facebook', 'Data Analyst', '2024-01-01', '2024-06-01', 'Pending'),
+(2, 'Microsoft', 'UX Designer', '2023-07-01', '2023-12-01', 'Completed');
 
 INSERT INTO Recruiters (UserID, Company, PositionPostedCount, FiltersPreferences, RecruiterType) VALUES
 (11, 'GreenTech Innovations', 12, 'Skills=Renewable Energy, Location=California', 'In-house'),
@@ -408,11 +434,6 @@ INSERT INTO Recruiters (UserID, Company, PositionPostedCount, FiltersPreferences
 (39, 'Orbit Solutions', 20, 'Skills=Space Science, Location=Texas', 'Agency'),
 (40, 'GlobalLingua', 10, 'Skills=Linguistics, Experience=Entry', 'In-house');
 
-
-
-
-
-
 INSERT INTO Jobs (Title, Company, Description, Requirements, Status, PostedBy, DatePosted, Deadline, Location, SalaryRange) VALUES
 ('Frontend Developer Intern', 'CodeWave', 'Develop and maintain UI components', 'HTML, CSS, JavaScript', 'Open', 21, '2024-01-16', '2024-02-16', 'San Francisco', '$20/hr'),
 ('Backend Developer Intern', 'GigaTech', 'Work on server-side logic and database management', 'Python, Django, SQL', 'Open', 22, '2024-01-18', '2024-02-18', 'Remote', '$25/hr'),
@@ -449,6 +470,30 @@ INSERT INTO Jobs (Title, Company, Description, Requirements, Status, PostedBy, D
 ('Backend Developer Intern', 'GigaTech', 'Work on server-side logic and database management', 'Python, Django, SQL', 'Open', 22, '2024-01-18', '2024-02-18', 'Remote', '$25/hr'),
 ('Cybersecurity Analyst', 'CyberShield Security', 'Monitor and secure networks', 'Network Security, Kali Linux', 'Open', 14, '2024-01-19', '2024-02-19', 'New York', '$30/hr'),
 ('Data Scientist', 'QuantumAI Labs', 'Analyze large datasets and build ML models', 'Python, R, Machine Learning', 'Open', 12, '2024-01-20', '2024-02-20', 'Boston', '$35/hr');
+
+INSERT INTO Employers (name, industry, location, status) VALUES
+('Tech Innovations Ltd.', 'Technology', 'San Francisco, CA', 'active'),
+('GreenBuild Corp.', 'Construction', 'Los Angeles, CA', 'active'),
+('DataMinds Analytics', 'Data Science', 'New York, NY', 'active'),
+('HealthPlus Medical', 'Healthcare', 'Chicago, IL', 'inactive'),
+('AutoTech Solutions', 'Automotive', 'Detroit, MI', 'active'),
+('Creative Minds Agency', 'Marketing', 'Miami, FL', 'inactive'),
+('EcoGreen Enterprises', 'Environmental', 'Seattle, WA', 'active'),
+('FinTech Partners', 'Finance', 'Boston, MA', 'active'),
+('Smart Systems Inc.', 'Electronics', 'Austin, TX', 'inactive'),
+('Global Retailers', 'Retail', 'Dallas, TX', 'active');
+
+INSERT INTO Employers (name, industry, location, status) VALUES
+('Tech Innovations Ltd.', 'Technology', 'San Francisco, CA', 'active'),
+('GreenBuild Corp.', 'Construction', 'Los Angeles, CA', 'active'),
+('DataMinds Analytics', 'Data Science', 'New York, NY', 'active'),
+('HealthPlus Medical', 'Healthcare', 'Chicago, IL', 'inactive'),
+('AutoTech Solutions', 'Automotive', 'Detroit, MI', 'active'),
+('Creative Minds Agency', 'Marketing', 'Miami, FL', 'inactive'),
+('EcoGreen Enterprises', 'Environmental', 'Seattle, WA', 'active'),
+('FinTech Partners', 'Finance', 'Boston, MA', 'active'),
+('Smart Systems Inc.', 'Electronics', 'Austin, TX', 'inactive'),
+('Global Retailers', 'Retail', 'Dallas, TX', 'active');
 
 INSERT INTO Applications (StudentID, JobID, Status, DateApplied, ReviewScore, Feedback) VALUES
 (1, 1, 'Pending', '2024-01-20', NULL, NULL),
@@ -577,17 +622,6 @@ INSERT INTO AdvisorMeetings (StudentID, AdvisorID, MeetingDate, MeetingTime, Pur
 (13, 5, '2024-03-14', '12:00:00', 'Networking Preparation', 'Suggested ideal LinkedIn optimizations'),
 (14, 6, '2024-03-15', '09:45:00', 'Career Development', 'Focused on resume improvement'),
 (15, 7, '2024-03-16', '11:30:00', 'Job Opportunities', 'Discussed advanced positions in IT');
-
--- Assuming you have some Recruiters already in the Recruiters table
--- Example Recruiter IDs: 1, 2, 3
-
-INSERT INTO Reports (Title, Description, GeneratedBy)VALUES 
-('Monthly Report - September', 'This report covers all student placements in the month of September.', 1),
-('Quarterly Review', 'A quarterly review of the co-op program and student progress.', 2),
-('Placement Statistics', 'Detailed analysis of student placement success rates for 2023.', 3),
-('Year-End Report', 'A comprehensive report on student placements and outcomes for the year.', 1),
-('Co-op Program Review', 'An analysis of the overall co-op program including feedback from students and companies.', 2);
-
 
 INSERT INTO Events (StudentID, EventName, CompanyName, EventDate, EventType) VALUES
 -- Initial Entries

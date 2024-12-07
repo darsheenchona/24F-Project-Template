@@ -13,7 +13,7 @@ SideBarLinks()
 st.title("Manage Employers")
 
 # Retrieve list of employers (adjust the URL to 'localhost' if Flask is local)
-employer_response = requests.get('http://localhost:4000/employers')  # or the appropriate IP
+employer_response = requests.get('http://api:4000/employers')  # or the appropriate IP
 
 if employer_response.status_code == 200:
     employers = employer_response.json()
@@ -28,7 +28,7 @@ if employer_response.status_code == 200:
         if st.button(f"Deactivate Employer {employer['id']}", key=f"deactivate_button_{employer['id']}"):
             # Trigger deactivation for the selected employer
             deactivate_response = requests.put(
-                f'http://localhost:4000/employers/{employer["id"]}',  # Use localhost if Flask is running locally
+                f'http://api:4000/employers/{employer["id"]}',  # Use localhost if Flask is running locally
                 json={"status": "inactive"}
             )
             
