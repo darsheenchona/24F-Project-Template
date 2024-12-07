@@ -14,4 +14,4 @@ Documentation and set up templates can be found here: https://github.com/NEU-CS3
 ## Video Link
 This is the video link that explains our repo and project. Please watch the video to fully understand our project. 
 
-Youtube: 
+Youtube: https://youtu.be/VsC7EmqDEbw
