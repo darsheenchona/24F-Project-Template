@@ -4,6 +4,7 @@ from backend.db_connection import db
 
 coop_advisor = Blueprint('coop_advisor', __name__)
 
+
 # ------------------------------------------------------------
 # retrieve co-op advisor profile info
 @coop_advisor.route('/coop_advisor/profile', methods=['GET'])
@@ -13,28 +14,17 @@ def get_coop_advisor_profile():
         return make_response("Advisor ID is required", 400)
 
     query = f'''
-        SELECT Users.name, Users.Email, Department, ActiveStudentCount
+        SELECT Users.name, Users.Email, CoOpAdvisors.Department, CoOpAdvisors.ActiveStudentCount
         FROM CoOpAdvisors 
         JOIN Users ON CoOpAdvisors.userID = Users.userID
         WHERE CoOpAdvisors.advisorID = {advisor_id}
     '''
-    
+
     cursor = db.get_db().cursor()
     cursor.execute(query)
     profile = cursor.fetchone()
 
-    if not profile:
-        return make_response("Co-op Advisor not found", 404)
-
-    # Safely access 'email' using .get(), which won't raise KeyError if missing
-    email = profile.get('email', 'No email available')
-    
-    return make_response(jsonify({
-        "name": profile.get("name", "No name available"),
-        "email": email,
-        "department": profile.get("department", "No department available"),
-        "advisingHistoryCount": profile.get("advisingHistoryCount", "N/A")
-    }), 200)
+    return make_response(jsonify(profile), 200)
 
 
 @coop_advisor.route('/coop_advisor/profile', methods=['PUT'])
@@ -47,19 +37,22 @@ def update_coop_advisor_profile():
         SET department = '{profile["department"]}'
         WHERE advisorID = {advisor_id}
     '''
-    
+
     cursor = db.get_db().cursor()
     cursor.execute(query)
+    db.get_db().commit()
 
     query_users = f'''
         UPDATE Users
         SET name = '{profile["name"]}', email = '{profile["email"]}'
         WHERE userID = (SELECT userID FROM CoOpAdvisors WHERE advisorID = {advisor_id})
     '''
+    cursor = db.get_db().cursor()
     cursor.execute(query_users)
     db.get_db().commit()
 
     return make_response("Co-op Advisor profile updated successfully", 200)
+
 
 # ------------------------------------------------------------
 # retrieve list of students advised by a co-op advisor
@@ -75,7 +68,7 @@ def get_advised_students():
         JOIN Users ON Students.userID = Users.userID
         WHERE Students.advisorID = {advisor_id}
     '''
-    
+
     cursor = db.get_db().cursor()
     cursor.execute(query)
     students = cursor.fetchall()
@@ -84,7 +77,6 @@ def get_advised_students():
         return make_response("No students found for the specified advisor", 404)
 
     return make_response(jsonify(students), 200)
-
 
 
 # retrieve specific student advised by a co-op advisor
@@ -124,6 +116,7 @@ def update_student_details(StudentID):
 
     return make_response("Student details updated successfully", 200)
 
+
 # ------------------------------------------------------------
 @coop_advisor.route('/students/<int:studentID>/placements', methods=['GET'])
 def get_student_placements(studentID):
@@ -132,11 +125,11 @@ def get_student_placements(studentID):
         FROM Placement
         WHERE StudentID = {studentID}
     '''
-    
+
     cursor = db.get_db().cursor()
     cursor.execute(query)
     placements = cursor.fetchall()
-    
+
     # Log the result of the query
     logger.info(f"Query result: {placements}")
 
@@ -145,21 +138,22 @@ def get_student_placements(studentID):
 
     return make_response(jsonify(placements), 200)
 
+
 # Add a new placement for a student
 @coop_advisor.route('/students/<StudentID>/placements', methods=['POST'])
 def add_student_placement(StudentID):
     data = request.json
-    
+
     # Validate required fields
     if not all(field in data for field in ['company', 'position', 'startDate', 'endDate', 'status']):
         return make_response(jsonify({"error": "Missing required fields"}), 400)
-    
+
     # Using string interpolation
     query = f'''
         INSERT INTO Placement (studentID, company, position, startDate, endDate, status)
         VALUES ({StudentID}, '{data["company"]}', '{data["position"]}', '{data["startDate"]}', '{data["endDate"]}', '{data["status"]}')
     '''
-    
+
     cursor = db.get_db().cursor()
     try:
         cursor.execute(query)
@@ -174,18 +168,18 @@ def add_student_placement(StudentID):
 @coop_advisor.route('/students/<StudentID>/placements/<placementID>', methods=['PUT'])
 def update_placement(StudentID, placementID):
     data = request.json
-    
+
     # Validate required fields
     if not all(field in data for field in ['company', 'position', 'startDate', 'endDate', 'status']):
         return make_response(jsonify({"error": "Missing required fields"}), 400)
-    
+
     # Using string interpolation
     query = f'''
         UPDATE Placement
         SET company = '{data["company"]}', position = '{data["position"]}', startDate = '{data["startDate"]}', endDate = '{data["endDate"]}', status = '{data["status"]}'
         WHERE placementID = {placementID} AND studentID = {StudentID}
     '''
-    
+
     cursor = db.get_db().cursor()
     try:
         cursor.execute(query)
@@ -196,7 +190,6 @@ def update_placement(StudentID, placementID):
         return make_response(jsonify({"error": "Failed to update placement."}), 500)
 
 
-
 # Delete placement
 @coop_advisor.route('/students/<StudentID>/placements/<placementID>', methods=['DELETE'])
 def delete_placement(StudentID, placementID):
@@ -205,7 +198,7 @@ def delete_placement(StudentID, placementID):
         DELETE FROM Placement
         WHERE placementID = {placementID} AND StudentID = {StudentID}
     '''
-    
+
     cursor = db.get_db().cursor()
     try:
         cursor.execute(query)
@@ -214,7 +207,6 @@ def delete_placement(StudentID, placementID):
     except Exception as e:
         logger.error(f"Error deleting placement: {e}")
         return make_response(jsonify({"error": "Failed to delete placement."}), 500)
-
 
 
 # ------------------------------------------------------------
@@ -276,7 +268,6 @@ def get_employers():
         return make_response("No employers found", 404)
 
     return make_response(jsonify(employers), 200)
-
 
 
 # ---------------------------------------------
@@ -395,8 +386,6 @@ def delete_employer(employer_id):
         return make_response("Error deleting employer", 500)
 
 
-
-
 # Retrieve student progress and profile information (Skills, Interests, etc.)
 @coop_advisor.route('/student_progress/<int:student_id>', methods=['GET'])
 def get_student_progress(student_id):
@@ -406,7 +395,7 @@ def get_student_progress(student_id):
         FROM Students
         WHERE StudentID = {student_id}
     '''  # Use direct string interpolation for student_id
-    
+
     cursor = db.get_db().cursor()
     cursor.execute(query)  # Execute query without parameters
     student_data = cursor.fetchone()
@@ -424,8 +413,6 @@ def update_student_progress(student_id):
     # Get the new data from the request
     data = request.json
 
-
-
     # Query to update student profile data using direct string interpolation
     query = f'''
         UPDATE Students
@@ -433,7 +420,7 @@ def update_student_progress(student_id):
             ResumeLink = '{data['ResumeLink']}', PortfolioLink = '{data['PortfolioLink']}'
         WHERE StudentID = {student_id}
     '''  # Use direct string interpolation for fields and student_id
-    
+
     cursor = db.get_db().cursor()
     cursor.execute(query)  # Execute query without parameters
     db.get_db().commit()
