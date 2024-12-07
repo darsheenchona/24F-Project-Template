@@ -4,6 +4,7 @@ CREATE DATABASE CoopProjectDB;
 USE CoopProjectDB;
 
 -- Drop all tables if they exist
+
 DROP TABLE IF EXISTS SystemAlerts;
 DROP TABLE IF EXISTS ITServices;
 DROP TABLE IF EXISTS PlatformAnalytics;
@@ -13,7 +14,9 @@ DROP TABLE IF EXISTS AdvisorMeetings;
 DROP TABLE IF EXISTS RecommendedJobs;
 DROP TABLE IF EXISTS SavedJobs;
 DROP TABLE IF EXISTS Applications;
+DROP TABLE IF EXISTS Placement;
 DROP TABLE IF EXISTS Jobs;
+DROP TABLE IF EXISTS Employers
 DROP TABLE IF EXISTS CoOpAdvisors;
 DROP TABLE IF EXISTS Alumni;
 DROP TABLE IF EXISTS Recruiters;
@@ -24,6 +27,7 @@ DROP TABLE IF EXISTS Interviews;
 DROP TABLE IF EXISTS ITEmployee;
 DROP TABLE IF EXISTS ITAssets;
 DROP TABLE IF EXISTS Tickets;
+
 
 
 -- Create the Users table
@@ -47,6 +51,17 @@ CREATE TABLE CoOpAdvisors (
     FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
 );
 
+-- Create the Placement table
+CREATE TABLE Placement (
+    placementID INT AUTO_INCREMENT PRIMARY KEY,
+    StudentID INT NOT NULL,
+    company VARCHAR(100) NOT NULL,
+    position VARCHAR(100) NOT NULL,
+    startDate DATE NOT NULL,
+    endDate DATE NOT NULL,
+    status ENUM('Active', 'Completed', 'Pending') NOT NULL,
+    FOREIGN KEY (StudentID) REFERENCES Students(StudentID) ON DELETE CASCADE
+);
 
 
 
@@ -322,6 +337,49 @@ INSERT INTO CoOpAdvisors (UserID, Department, MeetingAvailability, ActiveStudent
 (29, 'Economics', 'Tuesday, Thursday', 20),
 (30, 'Agriculture', 'Monday, Friday', 22);
 
+INSERT INTO Placement (StudentID, company, position, startDate, endDate, status) VALUES
+(1, 'Google', 'Software Engineer', '2023-06-01', '2023-12-01', 'Active'),
+(1, 'Facebook', 'Data Analyst', '2024-01-01', '2024-06-01', 'Pending'),
+(2, 'Microsoft', 'UX Designer', '2023-07-01', '2023-12-01', 'Completed'),
+(2, 'Amazon', 'Cloud Engineer', '2024-02-01', '2024-08-01', 'Active'),
+(3, 'Apple', 'iOS Developer', '2023-09-01', '2024-03-01', 'Pending'),
+(3, 'Intel', 'Hardware Engineer', '2023-10-15', '2024-04-15', 'Active'),
+(4, 'IBM', 'AI Research Intern', '2023-06-01', '2023-12-15', 'Completed'),
+(4, 'Oracle', 'Business Analyst', '2024-01-15', '2024-07-15', 'Pending'),
+(5, 'Netflix', 'Software Tester', '2023-08-01', '2024-01-01', 'Completed'),
+(5, 'Spotify', 'Data Scientist', '2024-03-01', '2024-09-01', 'Active'),
+(6, 'Adobe', 'Graphic Designer', '2023-11-01', '2024-04-01', 'Pending'),
+(6, 'Salesforce', 'CRM Consultant', '2023-12-01', '2024-06-01', 'Active'),
+(7, 'Twitter', 'Product Manager', '2023-05-01', '2023-10-01', 'Completed'),
+(7, 'TikTok', 'Social Media Strategist', '2023-12-01', '2024-06-01', 'Active'),
+(8, 'Adobe', 'Web Developer', '2023-06-15', '2023-12-15', 'Active'),
+(8, 'Cisco', 'Network Engineer', '2023-07-01', '2024-01-01', 'Pending'),
+(9, 'Dell', 'Systems Administrator', '2023-08-01', '2024-01-01', 'Completed'),
+(9, 'HP', 'DevOps Engineer', '2024-02-01', '2024-07-01', 'Active'),
+(10, 'Uber', 'Operations Manager', '2023-09-01', '2024-03-01', 'Pending'),
+(10, 'Lyft', 'Operations Analyst', '2023-11-15', '2024-05-15', 'Active'),
+(11, 'Snapchat', 'Marketing Intern', '2023-12-01', '2024-06-01', 'Completed'),
+(11, 'Pinterest', 'UX Research Intern', '2023-09-01', '2024-03-01', 'Pending'),
+(12, 'Airbnb', 'Hospitality Coordinator', '2024-01-01', '2024-07-01', 'Active'),
+(12, 'Expedia', 'Travel Analyst', '2024-02-01', '2024-08-01', 'Completed'),
+(13, 'LinkedIn', 'HR Intern', '2023-06-01', '2023-12-01', 'Pending'),
+(13, 'Indeed', 'Talent Acquisition Analyst', '2023-07-15', '2024-01-15', 'Active'),
+(14, 'Dropbox', 'Software Engineer Intern', '2023-08-01', '2024-02-01', 'Completed'),
+(14, 'Box', 'Cloud Support Engineer', '2023-10-01', '2024-04-01', 'Active'),
+(15, 'PayPal', 'Finance Analyst', '2023-09-15', '2024-03-15', 'Pending'),
+(15, 'Venmo', 'Transaction Coordinator', '2023-11-01', '2024-05-01', 'Active'),
+(16, 'Square', 'Product Designer', '2023-07-01', '2023-12-01', 'Completed'),
+(16, 'Stripe', 'Frontend Developer', '2024-01-01', '2024-06-01', 'Active'),
+(17, 'Yahoo', 'Data Analyst Intern', '2023-09-15', '2024-03-15', 'Pending'),
+(17, 'Reddit', 'Content Strategist', '2023-10-01', '2024-04-01', 'Active'),
+(18, 'Microsoft', 'Cybersecurity Analyst', '2023-11-01', '2024-05-01', 'Pending'),
+(18, 'Amazon', 'Security Consultant', '2024-01-01', '2024-07-01', 'Active'),
+(19, 'Spotify', 'Machine Learning Intern', '2023-06-01', '2023-12-01', 'Completed'),
+(19, 'Netflix', 'AI Research Assistant', '2023-08-01', '2024-02-01', 'Active'),
+(20, 'Oracle', 'IT Systems Analyst', '2023-07-15', '2023-12-15', 'Pending'),
+(20, 'IBM', 'System Analyst', '2023-10-01', '2024-04-01', 'Active');
+
+
 INSERT INTO Users (Name, Email, Role, Password) VALUES
 -- Students
 ('John Doe', 'john.doe@university.edu', 'Student', 'JohnSecure123'),
@@ -412,6 +470,18 @@ INSERT INTO Recruiters (UserID, Company, PositionPostedCount, FiltersPreferences
 (30, 'AlphaRobotics', 22, 'Skills=Robotics, Location=New York', 'In-house'),
 (39, 'Orbit Solutions', 20, 'Skills=Space Science, Location=Texas', 'Agency'),
 (40, 'GlobalLingua', 10, 'Skills=Linguistics, Experience=Entry', 'In-house');
+
+INSERT INTO Employers (name, industry, location, status) VALUES
+('Tech Innovations Ltd.', 'Technology', 'San Francisco, CA', 'active'),
+('GreenBuild Corp.', 'Construction', 'Los Angeles, CA', 'active'),
+('DataMinds Analytics', 'Data Science', 'New York, NY', 'active'),
+('HealthPlus Medical', 'Healthcare', 'Chicago, IL', 'inactive'),
+('AutoTech Solutions', 'Automotive', 'Detroit, MI', 'active'),
+('Creative Minds Agency', 'Marketing', 'Miami, FL', 'inactive'),
+('EcoGreen Enterprises', 'Environmental', 'Seattle, WA', 'active'),
+('FinTech Partners', 'Finance', 'Boston, MA', 'active'),
+('Smart Systems Inc.', 'Electronics', 'Austin, TX', 'inactive'),
+('Global Retailers', 'Retail', 'Dallas, TX', 'active');
 
 INSERT INTO Jobs (Title, Company, Description, Requirements, Status, PostedBy, DatePosted, Deadline, Location, SalaryRange) VALUES
 ('Frontend Developer Intern', 'CodeWave', 'Develop and maintain UI components', 'HTML, CSS, JavaScript', 'Open', 21, '2024-01-16', '2024-02-16', 'San Francisco', '$20/hr'),
