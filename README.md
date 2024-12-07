@@ -1,3 +1,7 @@
+## Team Members
+Fernando Garcia, Koyo Hashi, George Acostalemus, Darsheen Chona, Samarth Bhardwaj
+
+
 # Fall 2024 CS 3200 Project Template Repository
 
 This repo is a template for your semester project.  It includes most of the infrastructure setup (containers) and sample code and data throughout.  Explore it fully and ask questions.
