@@ -242,6 +242,7 @@ def update_application_status(job_id, application_id):
     cursor = db.get_db().cursor()
     cursor.execute(query)
     db.get_db().commit()
+    print("test")
 
     return make_response("Application status update successful", 200)
 
