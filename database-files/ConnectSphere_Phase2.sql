@@ -112,7 +112,6 @@ CREATE TABLE Employers (
     status TEXT DEFAULT 'active'  -- active or inactive
 );
 
-
 -- Create the Applications table
 CREATE TABLE Applications (
     ApplicationID INT AUTO_INCREMENT PRIMARY KEY,
@@ -306,10 +305,7 @@ INSERT INTO Users (Name, Email, Role, Password) VALUES
 ('Grace Collins', 'grace.collins@advisors.com', 'Advisor', 'GraceAdvisorSecure@'),
 ('Lucas Bell', 'lucas.bell@advisors.com', 'Advisor', 'LucasAdvises#2024');
 
-INSERT INTO Placement (StudentID, company, position, startDate, endDate, status) VALUES
-(1, 'Google', 'Software Engineer', '2023-06-01', '2023-12-01', 'Active'),
-(1, 'Facebook', 'Data Analyst', '2024-01-01', '2024-06-01', 'Pending'),
-(2, 'Microsoft', 'UX Designer', '2023-07-01', '2023-12-01', 'Completed');
+
 
 
 INSERT INTO CoOpAdvisors (UserID, Department, MeetingAvailability, ActiveStudentCount) VALUES
@@ -392,6 +388,11 @@ INSERT INTO Students (UserID, Major, Year, Skills, Interests, DashboardPreferenc
 (34, 'Computer Science', 4, 'React, Node.js, SQL', 'Web Development, Databases', 'Detailed', 'https://resume.example.com/student24', 'https://portfolio.example.com/student24'),
 (35, 'Software Engineering', 3, 'Full Stack Development, Agile', 'Cloud Computing, AI', 'Compact', 'https://resume.example.com/student25', 'https://portfolio.example.com/student25'),
 (36, 'Data Science', 4, 'Python, R, Machine Learning', 'Big Data, Analytics', 'Detailed', 'https://resume.example.com/student26', 'https://portfolio.example.com/student26');
+
+INSERT INTO Placement (StudentID, company, position, startDate, endDate, status) VALUES
+(1, 'Google', 'Software Engineer', '2023-06-01', '2023-12-01', 'Active'),
+(1, 'Facebook', 'Data Analyst', '2024-01-01', '2024-06-01', 'Pending'),
+(2, 'Microsoft', 'UX Designer', '2023-07-01', '2023-12-01', 'Completed');
 
 INSERT INTO Recruiters (UserID, Company, PositionPostedCount, FiltersPreferences, RecruiterType) VALUES
 (11, 'GreenTech Innovations', 12, 'Skills=Renewable Energy, Location=California', 'In-house'),
@@ -482,6 +483,17 @@ INSERT INTO Employers (name, industry, location, status) VALUES
 ('Smart Systems Inc.', 'Electronics', 'Austin, TX', 'inactive'),
 ('Global Retailers', 'Retail', 'Dallas, TX', 'active');
 
+INSERT INTO Employers (name, industry, location, status) VALUES
+('Tech Innovations Ltd.', 'Technology', 'San Francisco, CA', 'active'),
+('GreenBuild Corp.', 'Construction', 'Los Angeles, CA', 'active'),
+('DataMinds Analytics', 'Data Science', 'New York, NY', 'active'),
+('HealthPlus Medical', 'Healthcare', 'Chicago, IL', 'inactive'),
+('AutoTech Solutions', 'Automotive', 'Detroit, MI', 'active'),
+('Creative Minds Agency', 'Marketing', 'Miami, FL', 'inactive'),
+('EcoGreen Enterprises', 'Environmental', 'Seattle, WA', 'active'),
+('FinTech Partners', 'Finance', 'Boston, MA', 'active'),
+('Smart Systems Inc.', 'Electronics', 'Austin, TX', 'inactive'),
+('Global Retailers', 'Retail', 'Dallas, TX', 'active');
 
 INSERT INTO Applications (StudentID, JobID, Status, DateApplied, ReviewScore, Feedback) VALUES
 (1, 1, 'Pending', '2024-01-20', NULL, NULL),
